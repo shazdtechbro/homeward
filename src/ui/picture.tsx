@@ -43,3 +43,7 @@ export function Picture({ name, alt, sizes, priority, className, imgClassName, m
     </picture>
   );
 }
+
+export function imageNameOr(key: string, fallback: ImageName): ImageName {
+  return key in manifest ? (key as ImageName) : fallback;
+}

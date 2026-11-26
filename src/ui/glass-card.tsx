@@ -4,7 +4,7 @@ export function GlassCard({
   className,
   children,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.ComponentProps<"div">) {
   return (
     <div className={cn("glass rounded-lg shadow-soft", className)} {...props}>
       {children}

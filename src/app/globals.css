@@ -31,6 +31,10 @@
   --animate-ken-burns: ken-burns 10s var(--ease-out-expo) infinite alternate;
   --animate-radar-ping: radar-ping 2.4s var(--ease-out-expo) infinite;
   --animate-drift: drift 7s ease-in-out infinite alternate;
+  --animate-sweep: spin 3.6s linear infinite;
+  --animate-caret: caret 1s steps(1) infinite;
+  --animate-rise: rise 0.8s var(--ease-out-expo) both;
+  --animate-fade-up: fade-up 0.7s var(--ease-out-expo) both;
 
   @keyframes ken-burns {
     from { transform: scale(1) translate3d(0, 0, 0); }
@@ -39,6 +43,15 @@
   @keyframes radar-ping {
     from { transform: scale(0.15); opacity: 0.9; }
     to { transform: scale(1); opacity: 0; }
+  }
+  @keyframes rise {
+    from { transform: translate3d(0, 105%, 0); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  }
+  @keyframes caret {
+    50% { opacity: 0; }
   }
   @keyframes drift {
     from { transform: translate3d(0, 0, 0) rotate(-1deg); }
