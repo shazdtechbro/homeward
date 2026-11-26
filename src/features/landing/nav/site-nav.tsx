@@ -57,9 +57,11 @@ export function SiteNav() {
           >
             Sign in
           </a>
-          <ButtonLink href="#get-the-app" className="hidden sm:inline-flex">
-            Get the app <Arrow />
-          </ButtonLink>
+          <div className="hidden sm:block">
+            <ButtonLink href="#get-the-app">
+              Get the app <Arrow />
+            </ButtonLink>
+          </div>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
