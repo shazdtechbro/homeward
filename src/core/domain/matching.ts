@@ -1,0 +1,47 @@
+import { placeProximity } from "./campus";
+import type { Category, FoundItem } from "./item";
+import type { LostReport } from "./lost-report";
+
+export type Match = { item: FoundItem; score: number };
+
+const WEIGHTS = { category: 0.45, brand: 0.2, colour: 0.15, place: 0.2 } as const;
+
+/** Things people mix up or lose together, worth surfacing as weaker candidates. */
+const RELATED: Partial<Record<Category, Category[]>> = {
+  laptop: ["laptop-sleeve", "charger"],
+  "laptop-sleeve": ["laptop"],
+  phone: ["power-bank", "charger", "earbuds"],
+  earbuds: ["phone"],
+  bag: ["notebook"],
+};
+
+function categoryScore(wanted: Category | undefined, actual: Category) {
+  if (!wanted) return 0;
+  if (wanted === actual) return 1;
+  return RELATED[wanted]?.includes(actual) ? 0.5 : 0;
+}
+
+const same = (a: string | undefined, b: string | undefined) =>
+  a !== undefined && b !== undefined && a.toLowerCase() === b.toLowerCase();
+
+/**
+ * Field-level similarity between a lost report and a found item, 0–1.
+ * Embedding search narrows the candidates; this re-ranks them explainably.
+ */
+export function scoreCandidate(report: LostReport, item: FoundItem): number {
+  const score =
+    WEIGHTS.category * categoryScore(report.category?.value, item.category) +
+    WEIGHTS.brand * (same(report.brand?.value, item.brand) ? 1 : 0) +
+    WEIGHTS.colour * (same(report.colour?.value, item.colour) ? 1 : 0) +
+    WEIGHTS.place * placeProximity(report.place?.value, item.place);
+  return Math.round(score * 100) / 100;
+}
+
+export function rankMatches(report: LostReport, items: FoundItem[], limit = 3, floor = 0.25): Match[] {
+  return items
+    .filter((item) => item.status !== "claimed")
+    .map((item) => ({ item, score: scoreCandidate(report, item) }))
+    .filter((match) => match.score >= floor)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
+}
