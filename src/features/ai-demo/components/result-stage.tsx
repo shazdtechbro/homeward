@@ -36,7 +36,7 @@ export function ResultStage({ outcome, verified, pickupCode }: ResultStageProps)
               key="cta"
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-coral px-6 text-[15px] font-semibold text-white shadow-coral"
+              className="inline-flex h-12 items-center gap-2 rounded-full bg-coral px-6 text-[15px] font-semibold text-ink shadow-coral"
             >
               This looks like mine → Prove it
             </motion.span>
@@ -66,7 +66,7 @@ function MatchCard({ match, best }: { match: MatchView; best: boolean }) {
         <span
           className={cn(
             "absolute top-2 right-2 hidden rounded-full px-2.5 py-1 font-mono text-[13px] sm:block",
-            best ? "bg-coral text-white" : "bg-white/90 text-ink",
+            best ? "bg-coral text-ink" : "bg-white/90 text-ink",
           )}
         >
           {match.score}%
@@ -75,7 +75,7 @@ function MatchCard({ match, best }: { match: MatchView; best: boolean }) {
       <div className="min-w-0 flex-1 sm:mt-3 sm:px-1 sm:pb-1">
         <div className="flex items-baseline justify-between gap-2">
           <h3 className="truncate text-[15px] font-semibold">{match.title}</h3>
-          <span className={cn("font-mono text-[14px] sm:hidden", best ? "text-coral" : "text-ink-2")}>
+          <span className="font-mono text-[14px] text-ink sm:hidden">
             {match.score}%
           </span>
         </div>
@@ -83,7 +83,7 @@ function MatchCard({ match, best }: { match: MatchView; best: boolean }) {
           {match.place} · {match.when}
         </p>
         {match.readyAtSpot && (
-          <p className="mt-1.5 inline-flex items-center gap-1.5 text-[12px] font-semibold text-success">
+          <p className="mt-1.5 inline-flex items-center gap-1.5 text-[12px] font-semibold text-green">
             <span className="size-1.5 rounded-full bg-success" /> Ready at Spot
           </p>
         )}

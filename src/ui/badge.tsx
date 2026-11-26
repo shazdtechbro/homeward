@@ -15,6 +15,6 @@ export function Badge({ children, className }: { children: React.ReactNode; clas
 
 export function BadgeTag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full bg-coral px-2.5 py-0.5 text-[12px] font-bold text-white">{children}</span>
+    <span className="rounded-full bg-coral px-2.5 py-0.5 text-[12px] font-bold text-ink">{children}</span>
   );
 }

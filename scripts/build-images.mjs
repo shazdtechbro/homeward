@@ -60,8 +60,22 @@ async function buildVariants(name, image, sourceMtime, previous) {
   return { width, height, widths, blurDataURL: await blurDataUrl(image) };
 }
 
+/** A tiling film-grain texture: far cheaper to paint than a live SVG noise filter. */
+async function buildGrain() {
+  const size = 160;
+  const pixels = Buffer.alloc(size * size * 4);
+  for (let i = 0; i < size * size; i++) {
+    const v = Math.floor(Math.random() * 256);
+    pixels.set([v, v, v, 255], i * 4);
+  }
+  await sharp(pixels, { raw: { width: size, height: size, channels: 4 } })
+    .png({ compressionLevel: 9, palette: true, colours: 16 })
+    .toFile(path.join(ROOT, "public", "grain.png"));
+}
+
 async function main() {
   await mkdir(OUT, { recursive: true });
+  await buildGrain();
   const previous = existsSync(MANIFEST) ? JSON.parse(await readFile(MANIFEST, "utf8")) : {};
   const manifest = {};
 

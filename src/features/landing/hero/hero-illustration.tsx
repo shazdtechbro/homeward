@@ -39,7 +39,7 @@ export function HeroIllustration() {
               name="hero-halftone"
               alt={i === 0 ? "Illustration of students walking through a sunny UNILORIN courtyard" : ""}
               sizes={SIZES}
-              priority={i === 0}
+              priority
               className="absolute inset-0"
               imgClassName="size-full object-cover object-[30%_50%]"
               mask={layer.mask}

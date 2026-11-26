@@ -38,6 +38,7 @@ export function StorySection() {
       ref={sectionRef}
       aria-labelledby="stories-title"
       aria-roledescription="carousel"
+      data-playing={inView}
       className="relative overflow-hidden bg-sun py-28 sm:py-40"
     >
       <motion.p
@@ -108,7 +109,7 @@ export function StorySection() {
               <ArrowButton label="Previous story" onClick={() => go(-1)} direction="left" />
               <ArrowButton label="Next story" onClick={() => go(1)} direction="right" />
             </div>
-            <div className="flex gap-2" role="tablist" aria-label="Stories">
+            <div className="flex" role="tablist" aria-label="Stories">
               {STORIES.map((s, i) => (
                 <button
                   key={s.id}
@@ -117,11 +118,15 @@ export function StorySection() {
                   aria-selected={i === index}
                   aria-label={`${s.name}'s story`}
                   onClick={() => setIndex(i)}
-                  className={cn(
-                    "h-2.5 rounded-full bg-ink transition-[width,opacity] duration-500",
-                    i === index ? "w-8" : "w-2.5 opacity-30 hover:opacity-60",
-                  )}
-                />
+                  className="group grid h-11 place-items-center px-1"
+                >
+                  <span
+                    className={cn(
+                      "block h-2.5 rounded-full bg-ink transition-[width,opacity] duration-500",
+                      i === index ? "w-8" : "w-2.5 opacity-30 group-hover:opacity-60",
+                    )}
+                  />
+                </button>
               ))}
             </div>
           </div>

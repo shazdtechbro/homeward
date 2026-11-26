@@ -21,10 +21,15 @@ export function HeroCopy() {
 
       <h1
         id="hero-title"
-        className="font-display-tight mt-7 text-[52px] sm:text-[84px] lg:text-[124px] xl:text-[136px]"
+        className="font-display-tight mt-7 text-[52px] sm:text-[84px] lg:text-[124px]"
       >
-        <RiseWords text="Everything lost on campus" delay={0.15} />
-        <RiseWords text="finds its way home." delay={0.45} className="text-coral italic" />
+        {/* Explicit lines keep the line count identical before and after the web font loads (no CLS). */}
+        <RiseWords text="Everything lost" delay={0.15} />
+        <RiseWords text="on campus" delay={0.27} />
+        <span className="block text-coral italic">
+          <RiseWords text="finds its way" delay={0.45} className="sm:inline" />
+          <RiseWords text="home." delay={0.63} className="sm:inline" />
+        </span>
       </h1>
 
       <p

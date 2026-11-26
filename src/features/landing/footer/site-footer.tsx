@@ -52,7 +52,7 @@ export function SiteFooter() {
         <p aria-hidden className="mt-20 text-[22vw] leading-[0.8] font-extrabold tracking-[-0.06em] text-paper/[0.07] select-none md:text-[18vw]">
           Homeward
         </p>
-        <div className="mt-6 flex flex-col justify-between gap-2 border-t border-paper/15 pt-6 text-[14px] text-paper/60 sm:flex-row">
+        <div className="mt-6 flex flex-col justify-between gap-2 border-t border-paper/15 pt-6 text-[14px] text-paper/80 sm:flex-row">
           <span>© 2026 Homeward. Made in Ilorin.</span>
           <span>Built for the AWS Builders pitchathon</span>
         </div>

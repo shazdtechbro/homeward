@@ -8,7 +8,7 @@ const base =
 
 const variants: Record<Variant, string> = {
   ink: "bg-ink text-paper hover:shadow-soft",
-  coral: "bg-coral text-white hover:shadow-coral",
+  coral: "bg-coral text-ink hover:shadow-coral",
   ghost: "bg-transparent text-ink ring-1 ring-ink/15 hover:bg-ink/5",
   light: "bg-paper text-ink hover:shadow-soft",
 };

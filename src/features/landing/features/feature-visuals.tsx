@@ -43,7 +43,7 @@ export function SmartMatchVisual() {
         <div key={bar.label}>
           <div className="flex justify-between font-mono text-[12px] text-ink-2">
             <span>{bar.label}</span>
-            <span className={bar.best ? "text-coral" : undefined}>{Math.round(bar.fill * 100)}%</span>
+            <span className={bar.best ? "font-semibold text-ink" : undefined}>{Math.round(bar.fill * 100)}%</span>
           </div>
           <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-ink/8">
             <span
@@ -66,7 +66,7 @@ export function ProofVisual() {
       <p className="animate-cycle-in max-w-[85%] self-end rounded-[16px] rounded-br-md bg-ink px-3.5 py-2.5 text-paper" style={delay(0.7)}>
         A green Super Eagles one, peeling
       </p>
-      <p className="animate-cycle-in self-start rounded-full bg-success px-3.5 py-2 text-[13px] font-semibold text-white" style={delay(1.4)}>
+      <p className="animate-cycle-in self-start rounded-full bg-green px-3.5 py-2 text-[13px] font-semibold text-paper" style={delay(1.4)}>
         ✓ 3 of 3 correct · Ownership proved
       </p>
     </div>

@@ -9,7 +9,7 @@ type RiseWordsProps = { text: string; className?: string; delay?: number };
  */
 export function RiseWords({ text, className, delay = 0 }: RiseWordsProps) {
   return (
-    <span className={cn("block", className)}>
+    <span className={cn("block whitespace-nowrap", className)}>
       {text.split(" ").map((word, i) => (
         <span key={`${word}-${i}`} className="inline-block overflow-hidden pb-[0.08em] align-bottom">
           <span className="animate-rise inline-block" style={{ animationDelay: `${delay + i * STAGGER}s` }}>
