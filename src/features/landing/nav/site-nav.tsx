@@ -52,7 +52,7 @@ export function SiteNav() {
 
         <div className="flex items-center gap-1">
           <a
-            href="/sign-in"
+            href="#get-the-app"
             className="hidden rounded-full px-4 py-2 text-[15px] font-semibold text-ink sm:block"
           >
             Sign in
@@ -86,7 +86,7 @@ export function SiteNav() {
             className="glass absolute inset-x-4 top-20 origin-top rounded-lg p-3 shadow-lift lg:hidden"
           >
             <ul className="flex flex-col">
-              {[...LINKS, { href: "/sign-in", label: "Sign in" }].map((link, i) => (
+              {[...LINKS, { href: "#get-the-app", label: "Sign in" }].map((link, i) => (
                 <motion.li
                   key={link.href}
                   initial={{ opacity: 0, y: 8 }}
