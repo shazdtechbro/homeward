@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+.env*
+!.env.example
+coverage
+playwright-report
+test-results
+# Source PNGs are large; the optimised variants in public/images are committed.
+assets-src
+.preview
