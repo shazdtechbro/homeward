@@ -22,7 +22,7 @@ export default async function SignInPage({
       quoteBy="Femi, 400L Mechanical Engineering"
       chips={[
         {
-          icon: "sparkles",
+          icon: "match",
           text: "92% match · Black HP laptop",
           className: "top-[14%] left-[10%]",
         },

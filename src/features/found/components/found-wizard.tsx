@@ -17,7 +17,6 @@ import {
   Plug,
   Shirt,
   Smartphone,
-  Sparkles,
   Umbrella,
   Watch,
   type LucideIcon,
@@ -296,7 +295,6 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               {ai && !analysing && (ai.labels.length > 0 || ai.title || ai.colour) && (
                 <div className="mt-5 rounded-[20px] bg-sky/35 p-4" aria-live="polite">
                   <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase">
-                    <Sparkles aria-hidden className="mr-1.5 inline size-3.5 align-[-2px]" />
                     {aiSource === "nova" ? "What the AI saw" : "What we read from your photo"}
                     <span className="ml-2 rounded-full bg-white/80 px-2 py-0.5 text-[10px] tracking-normal text-ink-2 normal-case">
                       {aiSource === "nova" ? "Amazon Nova on Bedrock" : "Read on your device"}
@@ -345,7 +343,6 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               </h1>
               {ai?.title && (
                 <p className="-mt-3 text-[14px] text-ink-2">
-                  <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
                   We filled in what we could from your photo. Check it.
                 </p>
               )}
@@ -537,7 +534,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               </p>
 
               <div className="flex flex-wrap gap-2">
-                {suggestions.map((q, i) => (
+                {suggestions.map((q) => (
                   <button
                     key={q}
                     type="button"
@@ -549,12 +546,6 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                         : "border-ink/10 bg-white hover:border-ink/30",
                     )}
                   >
-                    {i === 0 && ai?.question === q && (
-                      <Sparkles
-                        aria-hidden
-                        className="mr-1 inline size-3.5 align-[-2px] text-coral"
-                      />
-                    )}
                     {q}
                   </button>
                 ))}

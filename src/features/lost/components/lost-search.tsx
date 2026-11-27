@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, Sparkles } from "lucide-react";
+import { Lock } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -34,10 +34,7 @@ export function LostSearch() {
 
   return (
     <section aria-labelledby="lost-title">
-      <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase">
-        <Sparkles aria-hidden className="mr-1.5 inline size-3.5 align-[-2px]" />
-        Homeward AI
-      </p>
+      <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase">Homeward AI</p>
       <h1
         id="lost-title"
         className="mt-3 max-w-[760px] font-display-tight text-[44px] sm:text-[64px]"

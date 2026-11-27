@@ -1,9 +1,9 @@
-import { Camera, Check, Lock, Sparkles } from "lucide-react";
+import { Award, Camera, Check, Lock, ScanSearch } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/ui/logo";
 import { Picture, type ImageName } from "@/ui/picture";
 
-const CHIP_ICONS = { camera: Camera, check: Check, lock: Lock, sparkles: Sparkles };
+const CHIP_ICONS = { award: Award, camera: Camera, check: Check, lock: Lock, match: ScanSearch };
 
 function ChipIcon({ name }: { name: keyof typeof CHIP_ICONS }) {
   const Icon = CHIP_ICONS[name];

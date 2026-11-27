@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Award } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/features/auth/actions";
 import { DesktopNav, MobileTabBar } from "@/features/app-shell/app-nav";
@@ -30,7 +30,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 className="hidden rounded-full bg-sun/50 px-3 py-1.5 font-mono text-[12px] sm:inline"
                 title="Karma"
               >
-                <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
+                <Award aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
                 {user.karma}
               </span>
               <Link

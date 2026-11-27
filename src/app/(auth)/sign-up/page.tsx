@@ -25,7 +25,7 @@ export default async function SignUpPage({
         chips={[
           { icon: "camera", text: "Snap it in 10 seconds", className: "top-[12%] left-[9%]" },
           { icon: "lock", text: "Your number stays private", className: "top-[26%] right-[7%]" },
-          { icon: "sparkles", text: "+50 karma per return", className: "top-[42%] left-[14%]" },
+          { icon: "award", text: "+50 karma per return", className: "top-[42%] left-[14%]" },
         ]}
       >
         <SignUpForm next={next} />
