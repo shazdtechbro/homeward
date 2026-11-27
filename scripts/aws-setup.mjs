@@ -5,7 +5,7 @@
 //
 // Reads keys from .env.local, then creates the DynamoDB table and the private
 // photo bucket, writes their names back to .env.local, and checks that
-// Rekognition, Nova and Titan all answer.
+// Rekognition, Nova and Titan all answer: done
 
 import { randomBytes } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
