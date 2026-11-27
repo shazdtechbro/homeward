@@ -78,3 +78,47 @@ export function rankMatches(
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
 }
+
+const STOP = new Set([
+  "i",
+  "my",
+  "a",
+  "an",
+  "the",
+  "at",
+  "in",
+  "on",
+  "near",
+  "lost",
+  "it",
+  "is",
+  "was",
+  "of",
+  "and",
+  "for",
+  "to",
+  "don",
+  "loss",
+  "for",
+]);
+const words = (text: string) =>
+  new Set(
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length > 1 && !STOP.has(w)),
+  );
+
+/**
+ * Share of the item's title words that appear in the report: a cheap stand-in
+ * for semantic similarity when no embedding model is available.
+ */
+export function titleOverlap(report: string, title: string): number {
+  const wanted = words(title);
+  if (wanted.size === 0) return 0;
+  const said = words(report);
+  let hits = 0;
+  for (const w of wanted) if (said.has(w)) hits++;
+  return hits / wanted.size;
+}

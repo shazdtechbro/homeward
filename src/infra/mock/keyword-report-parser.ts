@@ -68,11 +68,67 @@ const WHEN = ["last night", "this morning", "yesterday", "today", "tonight", "la
 const escape = (phrase: string) =>
   phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
 
-/** First phrase present as whole words, with the words exactly as the person wrote them. */
-function find<T>(text: string, phrases: Array<[string, T]>): Extracted<T> | undefined {
+/** Levenshtein distance, giving up once it passes `max`. */
+function distance(a: string, b: string, max: number): number {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const row = [i];
+    for (let j = 1; j <= b.length; j++) {
+      row[j] = Math.min(
+        prev[j]! + 1,
+        row[j - 1]! + 1,
+        prev[j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+    }
+    if (Math.min(...row) > max) return max + 1;
+    prev = row;
+  }
+  return prev[b.length]!;
+}
+
+/** Typos allowed for a phrase: none for short words, one or two for longer ones. */
+const tolerance = (phrase: string) => (phrase.length >= 8 ? 2 : phrase.length >= 4 ? 1 : 0);
+
+/** Runs of consecutive words, as many as the phrase has, spelled exactly as written. */
+function* windows(text: string, size: number) {
+  const words = [...text.matchAll(/[a-z0-9']+/gi)].map((m) => m[0]);
+  for (let i = 0; i + size <= words.length; i++) yield words.slice(i, i + size).join(" ");
+}
+
+/**
+ * First phrase present as whole words, with the words exactly as the person
+ * wrote them. Exact matches win; otherwise near-misses ("navvy", "calculater")
+ * are accepted within a small typo tolerance.
+ */
+function near(text: string, phrase: string): string | undefined {
+  const max = tolerance(phrase);
+  if (max === 0) return undefined;
+  const size = phrase.split(/\s+/).length;
+  for (const candidate of windows(text, size)) {
+    if (distance(candidate.toLowerCase(), phrase.toLowerCase(), max) <= max) return candidate;
+  }
+  return undefined;
+}
+
+function find<T>(
+  text: string,
+  phrases: Array<[string, T]>,
+  { fuzzy = true } = {},
+): Extracted<T> | undefined {
+  // Phrases are ordered most specific first, so a misspelt "laptop backpak"
+  // must still beat an exact "laptop": multi-word phrases try fuzzy in this pass.
   for (const [phrase, value] of phrases) {
     const match = new RegExp(`\\b${escape(phrase)}\\b`, "i").exec(text);
     if (match) return { value, evidence: match[0] };
+    const multiWord = phrase.includes(" ");
+    const candidate = fuzzy && multiWord ? near(text, phrase) : undefined;
+    if (candidate) return { value, evidence: candidate };
+  }
+  if (!fuzzy) return undefined;
+  for (const [phrase, value] of phrases) {
+    const candidate = near(text, phrase);
+    if (candidate) return { value, evidence: candidate };
   }
   return undefined;
 }
@@ -88,9 +144,11 @@ export class KeywordReportParser implements ReportParser {
       text,
       category: find(text, CATEGORY_WORDS),
       colour: find(text, COLOURS),
+      // Brand names are too short and distinct to guess at: exact matches only.
       brand: find(
         text,
         BRANDS.map((brand) => [brand, brand]),
+        { fuzzy: false },
       ),
       place: find(text, PLACE_ALIASES),
       when: daysAgo

@@ -1,7 +1,7 @@
 import { requiresPrivateMatch } from "@/core/domain/item";
 import { listingText, type Listing } from "@/core/domain/listing";
 import type { LostReport } from "@/core/domain/lost-report";
-import { cosine, rankMatches } from "@/core/domain/matching";
+import { cosine, rankMatches, titleOverlap } from "@/core/domain/matching";
 import type { Embedder, ListingRepository, MatchService } from "@/core/ports";
 
 /**
@@ -30,7 +30,15 @@ export class HybridMatchService implements MatchService {
     // Private categories (ID cards) are matched by matric number elsewhere, never listed here.
     const candidates = open.filter((item) => !requiresPrivateMatch(item.category));
     const query = this.embedder ? await this.embedder.embed(report.text) : undefined;
-    if (!query) return { scanned, matches: rankMatches(report, candidates) };
+    if (!query) {
+      // No embedding model: rank by how many of the item's title words the person used.
+      return {
+        scanned,
+        matches: rankMatches(report, candidates, 3, 0.25, (item) =>
+          titleOverlap(report.text, item.title),
+        ),
+      };
+    }
 
     const vectors = new Map<string, number[]>();
     await Promise.all(

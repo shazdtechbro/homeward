@@ -28,7 +28,24 @@ describe("KeywordReportParser", () => {
 
 describe("bag phrases", () => {
   it("reads a laptop bag as a bag, not a laptop", async () => {
-    const report = await new KeywordReportParser().parse("I lost my navy laptop bag at engineering");
+    const report = await new KeywordReportParser().parse(
+      "I lost my navy laptop bag at engineering",
+    );
     expect(report.category?.value).toBe("bag");
+  });
+});
+
+describe("typos", () => {
+  it("still understands misspelt colours and items", async () => {
+    const report = await new KeywordReportParser().parse("navvy laptop backpak at engineerng");
+    expect(report.colour?.value).toBe("blue");
+    expect(report.category?.value).toBe("bag");
+    expect(report.place?.value.name).toBe("Faculty of Engineering");
+  });
+
+  it("does not invent matches from unrelated words", async () => {
+    const report = await new KeywordReportParser().parse("I lost it near the gate");
+    expect(report.category).toBeUndefined();
+    expect(report.colour).toBeUndefined();
   });
 });
