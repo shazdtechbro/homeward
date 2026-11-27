@@ -13,13 +13,13 @@ import type { JsonModel } from "./model";
 
 /**
  * Vision models bill by image size and free tiers cap tokens per minute, so the
- * model gets a 768px copy: plenty to recognise an object or read a matric number.
+ * model gets a 640px copy: plenty to recognise an object or read a matric number.
  */
 async function forModel(bytes: Uint8Array): Promise<Uint8Array> {
   const small = await sharp(bytes)
     .rotate()
-    .resize(768, 768, { fit: "inside", withoutEnlargement: true })
-    .jpeg({ quality: 75 })
+    .resize(640, 640, { fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: 72 })
     .toBuffer();
   return new Uint8Array(small);
 }

@@ -30,7 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ItemPage({ params, searchParams }: Props) {
   const [{ id }, { posted, key }] = await Promise.all([params, searchParams]);
   const { items, claims } = getServices();
-  const [listing, user] = await Promise.all([items.get(id), currentUser()]);
+  const [first, user] = await Promise.all([items.get(id), currentUser()]);
+  // Belt and braces for a page opened the instant after posting.
+  const listing = first ?? (await new Promise((r) => setTimeout(r, 400)).then(() => items.get(id)));
   if (!listing) notFound();
 
   const isFinder = Boolean(

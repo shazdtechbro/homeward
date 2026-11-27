@@ -67,7 +67,11 @@ export class DynamoTable {
   }
 
   async get(pk: string, sk: string): Promise<Row | undefined> {
-    const { Item } = await this.db.send(new GetCommand({ TableName: this.name, Key: { pk, sk } }));
+    // Strongly consistent: a page opened right after a write (a new listing, a
+    // verified claim) must see it, or the user gets a false 404.
+    const { Item } = await this.db.send(
+      new GetCommand({ TableName: this.name, Key: { pk, sk }, ConsistentRead: true }),
+    );
     return Item;
   }
 
@@ -80,7 +84,13 @@ export class DynamoTable {
     let ExclusiveStartKey: Row | undefined;
     do {
       const page = await this.db.send(
-        new QueryCommand({ TableName: this.name, ...input, ExclusiveStartKey }),
+        new QueryCommand({
+          TableName: this.name,
+          // Base-table reads can be strongly consistent; global indexes cannot.
+          ConsistentRead: !input.IndexName,
+          ...input,
+          ExclusiveStartKey,
+        }),
       );
       rows.push(...(page.Items ?? []));
       ExclusiveStartKey = page.LastEvaluatedKey;
