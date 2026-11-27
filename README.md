@@ -18,7 +18,7 @@ More than 50,000 students move every day between hostels, faculties, CBT centres
 | Step | What happens |
 | --- | --- |
 | **Snap it** | A finder takes one photo. AI drafts the listing (what it is, colour, brand, description) and suggests an ownership question. Guests can post without an account. |
-| **Say it** | An owner describes the loss in plain words, pidgin included: *"my black HP laptop don loss for main library last night"*. AI extracts what, where and when, and ranks every find on campus by match score. |
+| **Say it** | An owner chats with **Homeward AI**, the way they'd tell a friend, pidgin included. It extracts what, where and when across the conversation, searches every find on campus, and streams back a calm reply with photo match cards right in the chat, asking one follow-up question when something's missing. |
 | **Prove it** | The owner answers a question only they could know, set by the finder. The check allows for different wording but not guesses. Three wrong answers lock the claim. |
 | **Collect it** | Proof unlocks the finder's contact and a **one-time pickup code**. They meet somewhere public on campus; the finder enters the owner's code before handing over. A matching code marks the item returned and earns the finder **+50 karma**. |
 
@@ -61,7 +61,7 @@ src/
   features/
     auth/               sign-up, sign-in, session actions and forms
     found/              snap-to-list wizard, photo resize, on-device colour reading
-    lost/               natural-language search
+    assistant/          the conversational lost-item assistant (streamed replies + inline matches)
     claims/             ownership check, pickup code, handover
     items/              listing cards and grid
     landing/, ai-demo/  marketing site and the animated AI demo

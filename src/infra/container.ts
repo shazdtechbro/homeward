@@ -47,6 +47,8 @@ export type Services = {
   /** Optional: without them, search is field-based and answers are checked by words. */
   embedder?: Embedder;
   judge?: AnswerJudge;
+  /** The conversational model behind the lost-item assistant. */
+  chat?: JsonModel;
 };
 
 type Parts = Omit<Services, "items" | "matcher"> & { listings: ListingRepository };
@@ -76,6 +78,7 @@ function aiServices(model: JsonModel | undefined, rekognition?: { region: string
     reportParser: new AiReportParser(model, keywords),
     vision: new AiImageAnalyzer(model, rekognition),
     judge: new AiAnswerJudge(model),
+    chat: model,
   };
 }
 

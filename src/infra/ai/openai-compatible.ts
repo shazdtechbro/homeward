@@ -1,5 +1,5 @@
 import "server-only";
-import { parseJsonObject, type JsonModel, type Part } from "./model";
+import { parseJsonObject, type JsonModel, type Part, type Turn } from "./model";
 
 type Options = { baseUrl: string; apiKey: string; textModel: string; visionModel: string };
 
@@ -61,5 +61,43 @@ export class OpenAiCompatibleModel implements JsonModel {
       throw new Error(`AI provider ${response.status}: ${(await response.text()).slice(0, 160)}`);
     const body = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> };
     return parseJsonObject<T>(body.choices?.[0]?.message?.content ?? "");
+  }
+
+  async *stream(system: string, turns: Turn[], maxTokens = 400): AsyncIterable<string> {
+    const response = await fetch(`${this.options.baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${this.options.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: this.options.textModel,
+        messages: [{ role: "system", content: system }, ...turns],
+        max_tokens: Math.max(maxTokens, 1024),
+        temperature: 0.6,
+        stream: true,
+      }),
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!response.ok || !response.body) {
+      throw new Error(`AI provider ${response.status}: ${(await response.text()).slice(0, 160)}`);
+    }
+    // Server-sent events: lines of `data: {json}`, ending with `data: [DONE]`.
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += value;
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        const data = line.replace(/^data:\s*/, "").trim();
+        if (!data || data === "[DONE]" || !line.startsWith("data:")) continue;
+        const delta = (JSON.parse(data) as { choices?: Array<{ delta?: { content?: string } }> })
+          .choices?.[0]?.delta?.content;
+        if (delta) yield delta;
+      }
+    }
   }
 }

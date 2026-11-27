@@ -3,7 +3,7 @@ import Link from "next/link";
 import { CATEGORIES, CATEGORY_LABELS, type Category } from "@/core/domain/item";
 import { ListingGrid } from "@/features/items/components/listing-grid";
 import { toCard } from "@/features/items/view";
-import { LostSearch } from "@/features/lost/components/lost-search";
+import { AssistantChat } from "@/features/assistant/components/assistant-chat";
 import { getServices } from "@/infra/container";
 import { cn } from "@/ui/cn";
 
@@ -28,7 +28,24 @@ export default async function LostPage({
 
   return (
     <>
-      <LostSearch />
+      <section
+        aria-labelledby="lost-title"
+        className="grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start"
+      >
+        <div className="lg:sticky lg:top-24">
+          <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase">
+            Homeward AI
+          </p>
+          <h1 id="lost-title" className="mt-3 font-display-tight text-[44px] sm:text-[60px]">
+            Lost something? <em className="font-normal italic">Let’s find it together.</em>
+          </h1>
+          <p className="mt-4 max-w-[420px] text-ink-2">
+            Chat like you’d tell a friend, pidgin included. Homeward AI searches every find on
+            campus and shows you the closest matches right in the conversation.
+          </p>
+        </div>
+        <AssistantChat />
+      </section>
 
       <section id="recent" aria-labelledby="recent-title" className="mt-20 scroll-mt-24">
         <div className="flex flex-wrap items-end justify-between gap-4">

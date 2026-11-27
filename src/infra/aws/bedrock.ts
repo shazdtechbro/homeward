@@ -2,12 +2,13 @@ import "server-only";
 import {
   BedrockRuntimeClient,
   ConverseCommand,
+  ConverseStreamCommand,
   InvokeModelCommand,
   type BedrockRuntimeClientConfig,
   type ContentBlock,
 } from "@aws-sdk/client-bedrock-runtime";
 import type { Embedder } from "@/core/ports";
-import { parseJsonObject, type JsonModel, type Part } from "@/infra/ai/model";
+import { parseJsonObject, type JsonModel, type Part, type Turn } from "@/infra/ai/model";
 import { logger } from "@/lib/logger";
 
 /** Amazon Nova through the Bedrock Converse API: Amazon's own models, text and vision. */
@@ -40,6 +41,21 @@ export class Bedrock implements JsonModel {
     return parseJsonObject<T>(
       result.output?.message?.content?.map((c) => c.text ?? "").join("") ?? "",
     );
+  }
+
+  async *stream(system: string, turns: Turn[], maxTokens = 400): AsyncIterable<string> {
+    const result = await this.client.send(
+      new ConverseStreamCommand({
+        modelId: this.textModel,
+        system: [{ text: system }],
+        messages: turns.map((t) => ({ role: t.role, content: [{ text: t.content }] })),
+        inferenceConfig: { maxTokens, temperature: 0.6 },
+      }),
+    );
+    for await (const event of result.stream ?? []) {
+      const text = event.contentBlockDelta?.delta?.text;
+      if (text) yield text;
+    }
   }
 
   async embed(text: string): Promise<number[]> {
