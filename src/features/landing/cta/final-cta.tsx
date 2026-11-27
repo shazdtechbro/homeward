@@ -31,10 +31,12 @@ export function FinalCta() {
           <Reveal>
             <h2
               id="cta-title"
-              className="font-display-tight max-w-[900px] text-[44px] text-paper drop-shadow-[0_4px_30px_rgba(20,20,18,0.45)] sm:text-[76px]"
+              className="max-w-[900px] font-display-tight text-[44px] text-paper drop-shadow-[0_4px_30px_rgba(20,20,18,0.45)] sm:text-[76px]"
             >
               Lost something?
-              <span className="block text-sun italic">It&rsquo;s probably already on its way home.</span>
+              <span className="block text-sun italic">
+                It&rsquo;s probably already on its way home.
+              </span>
             </h2>
           </Reveal>
           <Reveal delay={0.1} className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -51,7 +53,13 @@ export function FinalCta() {
   );
 }
 
-function Sticker({ name, className }: { name: "sticker-panic" | "sticker-dance"; className: string }) {
+function Sticker({
+  name,
+  className,
+}: {
+  name: "sticker-panic" | "sticker-dance";
+  className: string;
+}) {
   return (
     <span className={`block w-24 mix-blend-multiply sm:w-32 ${className}`}>
       <Picture name={name} alt="" sizes="128px" className="block" imgClassName="h-auto w-full" />

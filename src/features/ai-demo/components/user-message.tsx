@@ -10,7 +10,7 @@ export function UserMessage({ typed, evidence, typing }: UserMessageProps) {
 
   return (
     <div className="flex justify-end">
-      <p className="max-w-[34rem] min-h-[3.25rem] rounded-[22px] rounded-br-md bg-ink px-5 py-3.5 text-[17px] leading-[1.55] font-medium text-paper sm:text-[19px]">
+      <p className="min-h-[3.25rem] max-w-[34rem] rounded-[22px] rounded-br-md bg-ink px-5 py-3.5 text-[17px] leading-[1.55] font-medium text-paper sm:text-[19px]">
         {segments.map((segment, i) =>
           segment.highlighted ? (
             <Highlight key={`${segment.text}-${i}`} delay={i * 0.06}>
@@ -20,7 +20,12 @@ export function UserMessage({ typed, evidence, typing }: UserMessageProps) {
             <span key={`${segment.text}-${i}`}>{segment.text}</span>
           ),
         )}
-        {typing && <span aria-hidden className="animate-caret ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[3px] bg-sun" />}
+        {typing && (
+          <span
+            aria-hidden
+            className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[3px] animate-caret bg-sun"
+          />
+        )}
       </p>
     </div>
   );

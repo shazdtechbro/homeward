@@ -11,12 +11,16 @@ const LINKS = [
   { href: "/found/new", label: "I found something", short: "Found", icon: Plus },
 ];
 
-const isActive = (pathname: string, href: string) => pathname === href || (href !== "/home" && pathname.startsWith(href));
+const isActive = (pathname: string, href: string) =>
+  pathname === href || (href !== "/home" && pathname.startsWith(href));
 
 export function DesktopNav() {
   const pathname = usePathname();
   return (
-    <nav aria-label="App" className="hidden items-center gap-1 rounded-full bg-white/70 p-1 ring-1 ring-ink/8 md:flex">
+    <nav
+      aria-label="App"
+      className="hidden items-center gap-1 rounded-full bg-white/70 p-1 ring-1 ring-ink/8 md:flex"
+    >
       {LINKS.map((link) => (
         <Link
           key={link.href}

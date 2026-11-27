@@ -30,7 +30,7 @@ export function SiteNav() {
         transition={{ duration: 0.7, delay: 0.1 }}
         className={cn(
           "flex w-full max-w-[1180px] items-center justify-between rounded-full py-2 pr-2 pl-5 transition-[background-color,box-shadow,border-color] duration-500",
-          solid ? "glass shadow-soft" : "border border-transparent",
+          solid ? "shadow-soft glass" : "border border-transparent",
         )}
       >
         <Link href="/" aria-label="Homeward home">
@@ -83,7 +83,7 @@ export function SiteNav() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.98 }}
             transition={{ duration: 0.4 }}
-            className="glass absolute inset-x-4 top-20 origin-top rounded-lg p-3 shadow-lift lg:hidden"
+            className="absolute inset-x-4 top-20 origin-top rounded-lg p-3 shadow-lift glass lg:hidden"
           >
             <ul className="flex flex-col">
               {[...LINKS, { href: "/sign-in", label: "Sign in" }].map((link, i) => (

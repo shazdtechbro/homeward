@@ -17,9 +17,15 @@ const schema = z
     /** Amazon Nova 2 Lite through the EU cross-region inference profile. */
     HOMEWARD_TEXT_MODEL: z.string().default("eu.amazon.nova-2-lite-v1:0"),
     /** Optional: Titan embeddings for meaning-based search, where the region offers them. */
-    HOMEWARD_EMBED_MODEL: z.string().optional().transform((v) => v || undefined),
+    HOMEWARD_EMBED_MODEL: z
+      .string()
+      .optional()
+      .transform((v) => v || undefined),
     /** Optional: a region with Rekognition. Without it, Nova reads the photos on its own. */
-    HOMEWARD_REKOGNITION_REGION: z.string().optional().transform((v) => v || undefined),
+    HOMEWARD_REKOGNITION_REGION: z
+      .string()
+      .optional()
+      .transform((v) => v || undefined),
     /** Signs session cookies. At least 32 characters. */
     HOMEWARD_SESSION_SECRET: z.string().min(32).default(DEV_SECRET),
   })
@@ -31,11 +37,15 @@ const schema = z
 const parsed = schema.safeParse(process.env);
 
 if (!parsed.success) {
-  throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", ")}`);
+  throw new Error(
+    `Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join(", ")}`,
+  );
 }
 
 if (parsed.data.HOMEWARD_ADAPTERS === "aws" && parsed.data.HOMEWARD_SESSION_SECRET === DEV_SECRET) {
-  console.warn("HOMEWARD_SESSION_SECRET is the development default. Set a real one before going live.");
+  console.warn(
+    "HOMEWARD_SESSION_SECRET is the development default. Set a real one before going live.",
+  );
 }
 
 export const env = parsed.data;

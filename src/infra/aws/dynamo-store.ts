@@ -50,7 +50,8 @@ function fromRow<T>(row: Row): T {
   return rest as T;
 }
 
-const newestFirst = <T extends { createdAt: Date }>(a: T, b: T) => b.createdAt.getTime() - a.createdAt.getTime();
+const newestFirst = <T extends { createdAt: Date }>(a: T, b: T) =>
+  b.createdAt.getTime() - a.createdAt.getTime();
 
 /** Thin wrapper over the document client that knows the table and paginates. */
 export class DynamoTable {
@@ -78,7 +79,9 @@ export class DynamoTable {
     const rows: Row[] = [];
     let ExclusiveStartKey: Row | undefined;
     do {
-      const page = await this.db.send(new QueryCommand({ TableName: this.name, ...input, ExclusiveStartKey }));
+      const page = await this.db.send(
+        new QueryCommand({ TableName: this.name, ...input, ExclusiveStartKey }),
+      );
       rows.push(...(page.Items ?? []));
       ExclusiveStartKey = page.LastEvaluatedKey;
     } while (ExclusiveStartKey && rows.length < limit);
@@ -166,9 +169,18 @@ export class DynamoUserRepository implements UserRepository {
       await this.table.db.send(
         new TransactWriteCommand({
           TransactItems: [
-            { Put: { TableName: this.table.name, Item: { pk: `USER#${user.id}`, sk: "PROFILE", ...toRow(user) } } },
+            {
+              Put: {
+                TableName: this.table.name,
+                Item: { pk: `USER#${user.id}`, sk: "PROFILE", ...toRow(user) },
+              },
+            },
             ...lookups.map((Item) => ({
-              Put: { TableName: this.table.name, Item, ConditionExpression: "attribute_not_exists(pk)" },
+              Put: {
+                TableName: this.table.name,
+                Item,
+                ConditionExpression: "attribute_not_exists(pk)",
+              },
             })),
           ],
         }),
@@ -219,19 +231,33 @@ export class DynamoClaimRepository implements ClaimRepository {
     await this.table.db.send(
       new TransactWriteCommand({
         TransactItems: [
-          { Put: { TableName: this.table.name, Item: { pk: `ITEM#${claim.itemId}`, sk: `CLAIM#${claim.id}`, ...row } } },
-          { Put: { TableName: this.table.name, Item: { pk: `USER#${claim.claimantId}`, sk: `CLAIM#${claim.id}`, ...row } } },
+          {
+            Put: {
+              TableName: this.table.name,
+              Item: { pk: `ITEM#${claim.itemId}`, sk: `CLAIM#${claim.id}`, ...row },
+            },
+          },
+          {
+            Put: {
+              TableName: this.table.name,
+              Item: { pk: `USER#${claim.claimantId}`, sk: `CLAIM#${claim.id}`, ...row },
+            },
+          },
         ],
       }),
     );
   }
 
   async forItem(itemId: string) {
-    return (await this.table.under(`ITEM#${itemId}`, "CLAIM#")).map((r) => fromRow<Claim>(r)).sort(newestFirst);
+    return (await this.table.under(`ITEM#${itemId}`, "CLAIM#"))
+      .map((r) => fromRow<Claim>(r))
+      .sort(newestFirst);
   }
 
   async byClaimant(userId: string) {
-    return (await this.table.under(`USER#${userId}`, "CLAIM#")).map((r) => fromRow<Claim>(r)).sort(newestFirst);
+    return (await this.table.under(`USER#${userId}`, "CLAIM#"))
+      .map((r) => fromRow<Claim>(r))
+      .sort(newestFirst);
   }
 
   async addNotice(notice: Notice) {

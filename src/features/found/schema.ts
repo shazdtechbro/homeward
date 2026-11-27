@@ -42,9 +42,13 @@ export const foundItemSchema = z
     category: z.enum(CATEGORIES, { message: "Pick what kind of item it is." }),
     colour: z.string().trim().toLowerCase().min(3, "Pick the main colour.").max(20),
     brand: optionalText(30),
-    place: z.union([z.enum(PLACE_KEYS as [string, ...string[]]), z.literal("other")], { message: "Where did you find it?" }),
+    place: z.union([z.enum(PLACE_KEYS as [string, ...string[]]), z.literal("other")], {
+      message: "Where did you find it?",
+    }),
     placeOther: optionalText(60),
-    when: z.enum(Object.keys(WHEN_OPTIONS) as [keyof typeof WHEN_OPTIONS], { message: "When did you find it?" }),
+    when: z.enum(Object.keys(WHEN_OPTIONS) as [keyof typeof WHEN_OPTIONS], {
+      message: "When did you find it?",
+    }),
     description: optionalText(280),
     question: z.string().trim().min(8, "Ask something only the owner would know.").max(120),
     answer: z.string().trim().min(2, "Add the answer you’d expect.").max(80),
@@ -56,9 +60,18 @@ export const foundItemSchema = z
       .regex(/^\+?[0-9 ]{10,15}$/, "Use a number like 0803 123 4567.")
       .optional()
       .or(z.literal("").transform(() => undefined)),
-    contactEmail: z.string().trim().toLowerCase().email("That email doesn’t look right.").optional().or(z.literal("").transform(() => undefined)),
+    contactEmail: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .email("That email doesn’t look right.")
+      .optional()
+      .or(z.literal("").transform(() => undefined)),
   })
-  .refine((v) => v.place !== "other" || v.placeOther, { message: "Type where you found it.", path: ["placeOther"] })
+  .refine((v) => v.place !== "other" || v.placeOther, {
+    message: "Type where you found it.",
+    path: ["placeOther"],
+  })
   .refine((v) => v.contactPhone || v.contactEmail, {
     message: "Leave a phone number or an email so the owner can reach you.",
     path: ["contactPhone"],
@@ -69,7 +82,11 @@ export type FoundItemInput = z.infer<typeof foundItemSchema>;
 /** Questions that work well for each kind of item; the finder can write their own. */
 export const SUGGESTED_QUESTIONS: Record<string, string[]> = {
   laptop: ["What sticker is on the lid?", "What’s the wallpaper?", "Any scratch or dent? Where?"],
-  phone: ["What’s the lock-screen picture?", "What colour is the case?", "Anything tucked in the case?"],
+  phone: [
+    "What’s the lock-screen picture?",
+    "What colour is the case?",
+    "Anything tucked in the case?",
+  ],
   "id-card": ["Which faculty is printed on it?", "What’s the surname on the card?"],
   bag: ["What’s in the front pocket?", "Any keyring or badge on it?"],
   keys: ["What else hangs on the key ring?", "How many keys are there?"],

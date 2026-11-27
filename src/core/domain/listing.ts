@@ -23,19 +23,42 @@ export type Listing = FoundItem & {
   matric?: string;
   createdAt: Date;
   returnedTo?: string;
-  /** Titan embedding of the listing text, for meaning-based search. */
+  /** Optional embedding of the listing text, for meaning-based search. */
   embedding?: number[];
   /** Lets a guest finder (no account) close their listing from a private link. */
   manageToken?: string;
 };
 
 /** The text a listing is embedded from: what a person would say describing it. */
-export const listingText = (l: Pick<Listing, "title" | "brand" | "colour" | "category" | "description" | "place">) =>
-  [l.title, l.brand, l.colour, l.category.replace("-", " "), l.description, `found near ${l.place.name}`]
+export const listingText = (
+  l: Pick<Listing, "title" | "brand" | "colour" | "category" | "description" | "place">,
+) =>
+  [
+    l.title,
+    l.brand,
+    l.colour,
+    l.category.replace("-", " "),
+    l.description,
+    `found near ${l.place.name}`,
+  ]
     .filter(Boolean)
     .join(". ");
 
-const STOP_WORDS = new Set(["a", "an", "the", "is", "it", "of", "and", "with", "on", "in", "my", "its", "it's"]);
+const STOP_WORDS = new Set([
+  "a",
+  "an",
+  "the",
+  "is",
+  "it",
+  "of",
+  "and",
+  "with",
+  "on",
+  "in",
+  "my",
+  "its",
+  "it's",
+]);
 
 const tokens = (text: string) =>
   text
@@ -53,7 +76,9 @@ export function answerMatches(expected: string, given: string, threshold = 0.6):
   const wanted = tokens(expected);
   if (wanted.length === 0) return false;
   const offered = new Set(tokens(given));
-  const hits = wanted.filter((word) => offered.has(word) || [...offered].some((o) => o.length > 3 && word.startsWith(o))).length;
+  const hits = wanted.filter(
+    (word) => offered.has(word) || [...offered].some((o) => o.length > 3 && word.startsWith(o)),
+  ).length;
   return hits / wanted.length >= threshold;
 }
 

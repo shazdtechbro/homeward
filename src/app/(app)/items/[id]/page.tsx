@@ -16,7 +16,10 @@ import { ItemPhoto } from "@/ui/item-photo";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ posted?: string; key?: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ posted?: string; key?: string }>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listing = await getServices().items.get((await params).id);
@@ -30,17 +33,25 @@ export default async function ItemPage({ params, searchParams }: Props) {
   const [listing, user] = await Promise.all([items.get(id), currentUser()]);
   if (!listing) notFound();
 
-  const isFinder = Boolean((user && listing.finder.userId === user.id) || (key && listing.manageToken === key));
+  const isFinder = Boolean(
+    (user && listing.finder.userId === user.id) || (key && listing.manageToken === key),
+  );
   const ownsCard = Boolean(listing.matric && user?.matric === listing.matric);
 
   if (listing.category === "id-card" && !isFinder && !ownsCard) {
     return (
       <div className="mx-auto max-w-[560px] rounded-[28px] bg-green p-8 text-paper">
         <Lock aria-hidden className="size-10 text-sun" />
-        <h1 className="font-display-tight mt-3 text-[38px]">This ID card is private.</h1>
-        <p className="mt-3 text-paper/85">ID cards are only shown to the student whose matric number is on them. If it’s yours, sign in with an account that has your matric number.</p>
+        <h1 className="mt-3 font-display-tight text-[38px]">This ID card is private.</h1>
+        <p className="mt-3 text-paper/85">
+          ID cards are only shown to the student whose matric number is on them. If it’s yours, sign
+          in with an account that has your matric number.
+        </p>
         {!user && (
-          <Link href={`/sign-in?next=/items/${id}`} className="mt-6 inline-flex rounded-full bg-sun px-5 py-3 font-semibold text-ink">
+          <Link
+            href={`/sign-in?next=/items/${id}`}
+            className="mt-6 inline-flex rounded-full bg-sun px-5 py-3 font-semibold text-ink"
+          >
             Sign in
           </Link>
         )}
@@ -52,7 +63,10 @@ export default async function ItemPage({ params, searchParams }: Props) {
   const verifiedClaims = itemClaims.filter((c) => c.status === "verified");
   const mine = user ? itemClaims.filter((c) => c.claimantId === user.id) : [];
   const myClaim = mine.find((c) => c.status === "verified");
-  const attemptsLeft = Math.max(0, MAX_CLAIM_ATTEMPTS - mine.filter((c) => c.status === "rejected").length);
+  const attemptsLeft = Math.max(
+    0,
+    MAX_CLAIM_ATTEMPTS - mine.filter((c) => c.status === "rejected").length,
+  );
   const returned = listing.status === "claimed";
   const demo = isDemoListing(id);
 
@@ -60,11 +74,18 @@ export default async function ItemPage({ params, searchParams }: Props) {
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-14">
       {posted && (
         <div className="rounded-[24px] bg-sun p-5 lg:col-span-2">
-          <p className="flex items-center gap-2 text-[20px] font-semibold"><PartyPopper aria-hidden className="size-5" /> It’s live. Thank you for doing the right thing.</p>
-          <p className="mt-1 text-ink/80">The owner will see it when they search. They must answer your question before they can reach you.</p>
+          <p className="flex items-center gap-2 text-[20px] font-semibold">
+            <PartyPopper aria-hidden className="size-5" /> It’s live. Thank you for doing the right
+            thing.
+          </p>
+          <p className="mt-1 text-ink/80">
+            The owner will see it when they search. They must answer your question before they can
+            reach you.
+          </p>
           {listing.manageToken && (
             <p className="mt-3 rounded-[14px] bg-paper/70 p-3 text-[14px]">
-              <b>Bookmark this page.</b> You posted as a guest, so this private link is how you mark it returned later.
+              <b>Bookmark this page.</b> You posted as a guest, so this private link is how you mark
+              it returned later.
             </p>
           )}
         </div>
@@ -72,15 +93,32 @@ export default async function ItemPage({ params, searchParams }: Props) {
 
       <div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-[28px] bg-paper-2 shadow-soft">
-          <ItemPhoto imageKey={listing.imageKey} alt={listing.title} sizes="(min-width: 1024px) 55vw, 100vw" priority className="size-full" />
-          {returned && <span className="absolute top-4 left-4 rounded-full bg-green px-4 py-2 text-[14px] font-bold text-paper"><Check aria-hidden className="mr-1 inline size-4 align-[-3px]" />Returned home</span>}
-          {demo && <span className="absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1.5 text-[12px] font-semibold text-ink-2">Demo listing</span>}
+          <ItemPhoto
+            imageKey={listing.imageKey}
+            alt={listing.title}
+            sizes="(min-width: 1024px) 55vw, 100vw"
+            priority
+            className="size-full"
+          />
+          {returned && (
+            <span className="absolute top-4 left-4 rounded-full bg-green px-4 py-2 text-[14px] font-bold text-paper">
+              <Check aria-hidden className="mr-1 inline size-4 align-[-3px]" />
+              Returned home
+            </span>
+          )}
+          {demo && (
+            <span className="absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1.5 text-[12px] font-semibold text-ink-2">
+              Demo listing
+            </span>
+          )}
         </div>
       </div>
 
       <div>
-        <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase">Found · {CATEGORY_LABELS[listing.category]}</p>
-        <h1 className="font-display-tight mt-3 text-[42px] sm:text-[56px]">{listing.title}</h1>
+        <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase">
+          Found · {CATEGORY_LABELS[listing.category]}
+        </p>
+        <h1 className="mt-3 font-display-tight text-[42px] sm:text-[56px]">{listing.title}</h1>
         <dl className="mt-6 grid grid-cols-2 gap-3">
           {[
             ["Where", listing.place.name],
@@ -94,20 +132,35 @@ export default async function ItemPage({ params, searchParams }: Props) {
             </div>
           ))}
         </dl>
-        {listing.description && <p className="mt-5 text-[16px] text-ink-2">{listing.description}</p>}
+        {listing.description && (
+          <p className="mt-5 text-[16px] text-ink-2">{listing.description}</p>
+        )}
 
         <div className="mt-8">
           {isFinder ? (
-            <FinderPanel itemId={id} manageKey={key} returned={returned} verifiedClaims={verifiedClaims} />
+            <FinderPanel
+              itemId={id}
+              manageKey={key}
+              returned={returned}
+              verifiedClaims={verifiedClaims}
+            />
           ) : returned ? (
-            <p className="rounded-[24px] bg-white p-6 text-ink-2 shadow-soft">This item has already gone home.</p>
+            <p className="rounded-[24px] bg-white p-6 text-ink-2 shadow-soft">
+              This item has already gone home.
+            </p>
           ) : myClaim ? (
             <div className="space-y-4">
               <ContactCard title="Proved. Here’s the finder" contact={listing.finder} />
               {myClaim.pickupCode && <PickupCodeCard code={myClaim.pickupCode} />}
             </div>
           ) : (
-            <ClaimPanel itemId={id} question={listing.check.question} signedIn={Boolean(user)} attemptsLeft={attemptsLeft} matricProof={ownsCard} />
+            <ClaimPanel
+              itemId={id}
+              question={listing.check.question}
+              signedIn={Boolean(user)}
+              attemptsLeft={attemptsLeft}
+              matricProof={ownsCard}
+            />
           )}
         </div>
       </div>
@@ -119,23 +172,46 @@ type FinderPanelProps = {
   itemId: string;
   manageKey?: string;
   returned: boolean;
-  verifiedClaims: Array<{ claimantId: string; claimantName: string; claimantPhone?: string; claimantEmail?: string }>;
+  verifiedClaims: Array<{
+    claimantId: string;
+    claimantName: string;
+    claimantPhone?: string;
+    claimantEmail?: string;
+  }>;
 };
 
 function FinderPanel({ itemId, manageKey, returned, verifiedClaims }: FinderPanelProps) {
   if (returned) {
-    return <p className="rounded-[24px] bg-green p-6 text-paper">You got this one home. Karma added. Thank you!</p>;
+    return (
+      <p className="rounded-[24px] bg-green p-6 text-paper">
+        You got this one home. Karma added. Thank you!
+      </p>
+    );
   }
   const latest = verifiedClaims[0];
   return (
     <div className="space-y-4">
       <p className="text-[13px] font-bold tracking-[0.12em] text-ink-2 uppercase">You found this</p>
       {!latest ? (
-        <p className="rounded-[24px] bg-white p-6 text-ink-2 shadow-soft">No one has proved it’s theirs yet. The moment they do, you’ll see how to reach them here and in your inbox.</p>
+        <p className="rounded-[24px] bg-white p-6 text-ink-2 shadow-soft">
+          No one has proved it’s theirs yet. The moment they do, you’ll see how to reach them here
+          and in your inbox.
+        </p>
       ) : (
         <>
-          <ContactCard title="Proved ownership" contact={{ name: latest.claimantName, phone: latest.claimantPhone, email: latest.claimantEmail }} />
-          <HandoverForm itemId={itemId} manageKey={manageKey} ownerFirstName={latest.claimantName.split(" ")[0] ?? "the owner"} />
+          <ContactCard
+            title="Proved ownership"
+            contact={{
+              name: latest.claimantName,
+              phone: latest.claimantPhone,
+              email: latest.claimantEmail,
+            }}
+          />
+          <HandoverForm
+            itemId={itemId}
+            manageKey={manageKey}
+            ownerFirstName={latest.claimantName.split(" ")[0] ?? "the owner"}
+          />
         </>
       )}
     </div>

@@ -14,11 +14,14 @@ const SERVICES = [
 export function AwsStrip() {
   return (
     <section aria-labelledby="aws-title" className="overflow-hidden py-20 sm:py-28">
-      <p id="aws-title" className="text-center text-[13px] font-bold tracking-[0.12em] text-ink-2 uppercase">
+      <p
+        id="aws-title"
+        className="text-center text-[13px] font-bold tracking-[0.12em] text-ink-2 uppercase"
+      >
         Built on AWS · serverless, scales with every semester
       </p>
       <InViewPlay className="relative mt-8 [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]">
-        <ul className="animate-marquee flex w-max gap-3">
+        <ul className="flex w-max animate-marquee gap-3">
           {[...SERVICES, ...SERVICES].map(([name, role], i) => (
             <li
               key={`${name}-${i}`}

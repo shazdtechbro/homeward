@@ -13,9 +13,33 @@ const laptop: SearchResponse = {
   outcome: {
     kind: "matches",
     matches: [
-      { id: "itm_hp01", title: "Black HP laptop", place: "Library desk", when: "10:14 pm", score: 92, imageKey: "match-laptop-hp", readyAtSpot: true },
-      { id: "itm_dl02", title: "Black Dell laptop", place: "Engineering", when: "yesterday", score: 61, imageKey: "match-laptop-dell", readyAtSpot: false },
-      { id: "itm_sl03", title: "Grey laptop sleeve", place: "Shuttle Park", when: "2 days ago", score: 34, imageKey: "match-sleeve", readyAtSpot: false },
+      {
+        id: "itm_hp01",
+        title: "Black HP laptop",
+        place: "Library desk",
+        when: "10:14 pm",
+        score: 92,
+        imageKey: "match-laptop-hp",
+        readyAtSpot: true,
+      },
+      {
+        id: "itm_dl02",
+        title: "Black Dell laptop",
+        place: "Engineering",
+        when: "yesterday",
+        score: 61,
+        imageKey: "match-laptop-dell",
+        readyAtSpot: false,
+      },
+      {
+        id: "itm_sl03",
+        title: "Grey laptop sleeve",
+        place: "Shuttle Park",
+        when: "2 days ago",
+        score: 34,
+        imageKey: "match-sleeve",
+        readyAtSpot: false,
+      },
     ],
   },
 };

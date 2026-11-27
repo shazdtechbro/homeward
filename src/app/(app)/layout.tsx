@@ -26,14 +26,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <DesktopNav />
           {user ? (
             <div className="flex items-center gap-2">
-              <span className="hidden rounded-full bg-sun/50 px-3 py-1.5 font-mono text-[12px] sm:inline" title="Karma">
-                <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />{user.karma}
+              <span
+                className="hidden rounded-full bg-sun/50 px-3 py-1.5 font-mono text-[12px] sm:inline"
+                title="Karma"
+              >
+                <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
+                {user.karma}
               </span>
-              <Link href="/home#account" className="grid size-10 place-items-center rounded-full bg-green text-[14px] font-bold text-paper" aria-label="Your account">
+              <Link
+                href="/home#account"
+                className="grid size-10 place-items-center rounded-full bg-green text-[14px] font-bold text-paper"
+                aria-label="Your account"
+              >
                 {initials}
               </Link>
               <form action={signOut} className="hidden md:block">
-                <button className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-2 hover:text-ink">Sign out</button>
+                <button className="rounded-full px-3 py-2 text-[13px] font-semibold text-ink-2 hover:text-ink">
+                  Sign out
+                </button>
               </form>
             </div>
           ) : (

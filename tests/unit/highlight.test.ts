@@ -12,6 +12,8 @@ describe("splitByEvidence", () => {
   });
 
   it("ignores phrases that are not present yet, e.g. mid-typing", () => {
-    expect(splitByEvidence("Lost my bla", ["black"])).toEqual([{ text: "Lost my bla", highlighted: false }]);
+    expect(splitByEvidence("Lost my bla", ["black"])).toEqual([
+      { text: "Lost my bla", highlighted: false },
+    ]);
   });
 });

@@ -1,8 +1,8 @@
 import { searchResponseSchema, type SearchResponse } from "./schema";
 
 /**
- * The only call the browser makes. Which engine answers (in-memory keyword
- * scoring or Bedrock + S3 Vectors) is decided server-side in the container.
+ * The landing demo's only network call. Which parser answers (keyword rules
+ * or Amazon Nova) is decided server-side in the container.
  */
 export async function searchLostItem(text: string, signal?: AbortSignal): Promise<SearchResponse> {
   const response = await fetch("/api/search", {

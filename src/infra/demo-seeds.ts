@@ -20,7 +20,10 @@ const DEMO_FINDER = { name: "Homeward demo finder", email: "demo@homeward.ng" };
  */
 export function demoListings(now = Date.now()): Listing[] {
   return buildCatalogue(now).map((item) => {
-    const [question, answer] = QUESTIONS[item.category] ?? ["Describe one detail that isn't in the photo.", item.colour];
+    const [question, answer] = QUESTIONS[item.category] ?? [
+      "Describe one detail that isn't in the photo.",
+      item.colour,
+    ];
     return {
       ...item,
       description: `${item.title}, handed in near ${item.place.name}. Demo listing.`,
@@ -49,7 +52,10 @@ export function withDemoSeeds(repo: ListingRepository): ListingRepository {
     },
     async listOpen(filter) {
       const all = [...(await repo.listOpen(filter)), ...seeds()];
-      return all.filter((item) => item.status !== "claimed" && (!filter?.category || item.category === filter.category));
+      return all.filter(
+        (item) =>
+          item.status !== "claimed" && (!filter?.category || item.category === filter.category),
+      );
     },
     async count() {
       return SIMULATED_INVENTORY_SIZE + (await repo.count());

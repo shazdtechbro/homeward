@@ -31,28 +31,47 @@ export function AuthShell({ art, quote, quoteBy, chips, children }: AuthShellPro
         </Link>
 
         <div className="relative -mx-5 mt-5 h-[210px] overflow-hidden sm:-mx-10 lg:hidden">
-          <Picture name={art} alt="" sizes="100vw" priority className="block size-full" imgClassName="size-full object-cover" />
+          <Picture
+            name={art}
+            alt=""
+            sizes="100vw"
+            priority
+            className="block size-full"
+            imgClassName="size-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-paper" />
         </div>
 
-        <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center py-6 lg:py-12">{children}</div>
+        <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center py-6 lg:py-12">
+          {children}
+        </div>
 
         <p className="mx-auto max-w-[440px] text-center text-[13px] text-ink-2">
           Found something and in a hurry?{" "}
-          <Link href="/found/new" className="font-semibold text-ink underline decoration-coral decoration-2 underline-offset-4">
+          <Link
+            href="/found/new"
+            className="font-semibold text-ink underline decoration-coral decoration-2 underline-offset-4"
+          >
             Log it as a guest
           </Link>
         </p>
       </div>
 
       <aside className="relative hidden overflow-hidden bg-green lg:block">
-        <Picture name={art} alt="" sizes="55vw" priority className="absolute inset-0 block" imgClassName="size-full object-cover" />
+        <Picture
+          name={art}
+          alt=""
+          sizes="55vw"
+          priority
+          className="absolute inset-0 block"
+          imgClassName="size-full object-cover"
+        />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,90,68,0)_40%,rgba(11,69,53,0.92))]" />
 
         {chips.map((chip, i) => (
           <span
             key={chip.text}
-            className={`glass animate-drift absolute flex items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-semibold text-ink shadow-soft ${chip.className}`}
+            className={`absolute flex animate-drift items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-semibold text-ink shadow-soft glass ${chip.className}`}
             style={{ animationDelay: `${i * -2.3}s` }}
           >
             <ChipIcon name={chip.icon} />
@@ -61,7 +80,7 @@ export function AuthShell({ art, quote, quoteBy, chips, children }: AuthShellPro
         ))}
 
         <figure className="absolute inset-x-12 bottom-12 text-paper">
-          <blockquote className="font-display-tight max-w-[520px] text-[40px] leading-[1.05] xl:text-[48px]">
+          <blockquote className="max-w-[520px] font-display-tight text-[40px] leading-[1.05] xl:text-[48px]">
             “{quote}”
           </blockquote>
           <figcaption className="mt-5 text-[15px] font-medium text-paper/80">{quoteBy}</figcaption>

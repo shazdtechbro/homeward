@@ -29,7 +29,9 @@ export function SignUpForm({ next }: { next?: string }) {
   function goToDetails() {
     const form = formRef.current;
     if (!form) return;
-    const required = ["name", "email", "password"].map((n) => form.elements.namedItem(n) as HTMLInputElement);
+    const required = ["name", "email", "password"].map(
+      (n) => form.elements.namedItem(n) as HTMLInputElement,
+    );
     const firstInvalid = required.find((input) => !input.checkValidity());
     if (firstInvalid) {
       firstInvalid.reportValidity();
@@ -41,7 +43,10 @@ export function SignUpForm({ next }: { next?: string }) {
 
   return (
     <div>
-      <ol aria-label="Sign-up progress" className="flex items-center gap-2 text-[13px] font-semibold">
+      <ol
+        aria-label="Sign-up progress"
+        className="flex items-center gap-2 text-[13px] font-semibold"
+      >
         {["Your account", "Find things faster"].map((label, i) => (
           <li key={label} className="flex items-center gap-2">
             <span
@@ -75,7 +80,11 @@ export function SignUpForm({ next }: { next?: string }) {
               </h1>
             ) : (
               <h1 className="font-display-tight text-[42px] sm:text-[52px]">
-                One more thing, <em className="font-normal italic">{firstName || (values.name ?? "").split(" ")[0] || "friend"}</em>.
+                One more thing,{" "}
+                <em className="font-normal italic">
+                  {firstName || (values.name ?? "").split(" ")[0] || "friend"}
+                </em>
+                .
               </h1>
             )}
             <p className="mt-4 text-[16px] text-ink-2">
@@ -91,13 +100,45 @@ export function SignUpForm({ next }: { next?: string }) {
 
           <div className={cn("space-y-5", shown !== 1 && "hidden")}>
             <Field label="Full name" error={errors.name}>
-              {(a11y) => <input {...a11y} name="name" autoComplete="name" placeholder="Aisha Bello" defaultValue={values.name} className={inputClass} required minLength={2} />}
+              {(a11y) => (
+                <input
+                  {...a11y}
+                  name="name"
+                  autoComplete="name"
+                  placeholder="Aisha Bello"
+                  defaultValue={values.name}
+                  className={inputClass}
+                  required
+                  minLength={2}
+                />
+              )}
             </Field>
             <Field label="Email" error={errors.email}>
-              {(a11y) => <input {...a11y} name="email" type="email" autoComplete="email" placeholder="you@students.unilorin.edu.ng" defaultValue={values.email} className={inputClass} required />}
+              {(a11y) => (
+                <input
+                  {...a11y}
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@students.unilorin.edu.ng"
+                  defaultValue={values.email}
+                  className={inputClass}
+                  required
+                />
+              )}
             </Field>
             <Field label="Password" error={errors.password}>
-              {(a11y) => <PasswordInput {...a11y} name="password" autoComplete="new-password" placeholder="At least 8 characters" showStrength required minLength={8} />}
+              {(a11y) => (
+                <PasswordInput
+                  {...a11y}
+                  name="password"
+                  autoComplete="new-password"
+                  placeholder="At least 8 characters"
+                  showStrength
+                  required
+                  minLength={8}
+                />
+              )}
             </Field>
             <Button type="button" size="lg" className="w-full" onClick={goToDetails}>
               Continue <Arrow />
@@ -105,15 +146,58 @@ export function SignUpForm({ next }: { next?: string }) {
           </div>
 
           <div className={cn("space-y-5", shown !== 2 && "hidden")}>
-            <Field label="Matric number" optional error={errors.matric} hint={<><Lock aria-hidden className="inline size-4 align-[-3px]" /> If your ID card is ever handed in, only <b>you</b> get told. It’s never shown publicly.</>}>
-              {(a11y) => <input {...a11y} name="matric" placeholder="19/52HA041" autoCapitalize="characters" defaultValue={values.matric} className={cn(inputClass, "font-mono uppercase")} />}
+            <Field
+              label="Matric number"
+              optional
+              error={errors.matric}
+              hint={
+                <>
+                  <Lock aria-hidden className="inline size-4 align-[-3px]" /> If your ID card is
+                  ever handed in, only <b>you</b> get told. It’s never shown publicly.
+                </>
+              }
+            >
+              {(a11y) => (
+                <input
+                  {...a11y}
+                  name="matric"
+                  placeholder="19/52HA041"
+                  autoCapitalize="characters"
+                  defaultValue={values.matric}
+                  className={cn(inputClass, "font-mono uppercase")}
+                />
+              )}
             </Field>
-            <Field label="Phone or WhatsApp" optional error={errors.phone} hint="Shared only with someone who has proved an item is theirs.">
-              {(a11y) => <input {...a11y} name="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="0803 123 4567" defaultValue={values.phone} className={inputClass} />}
+            <Field
+              label="Phone or WhatsApp"
+              optional
+              error={errors.phone}
+              hint="Shared only with someone who has proved an item is theirs."
+            >
+              {(a11y) => (
+                <input
+                  {...a11y}
+                  name="phone"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="0803 123 4567"
+                  defaultValue={values.phone}
+                  className={inputClass}
+                />
+              )}
             </Field>
             <Field label="Faculty" optional error={errors.faculty}>
               {(a11y) => (
-                <select {...a11y} name="faculty" defaultValue={values.faculty ?? ""} className={cn(inputClass, "appearance-none bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 fill=%22none%22 stroke=%22%23141412%22 stroke-width=%221.6%22/></svg>')] bg-[length:12px] bg-[right_16px_center] bg-no-repeat pr-10")}>
+                <select
+                  {...a11y}
+                  name="faculty"
+                  defaultValue={values.faculty ?? ""}
+                  className={cn(
+                    inputClass,
+                    "bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22><path d=%22M1 1l5 5 5-5%22 fill=%22none%22 stroke=%22%23141412%22 stroke-width=%221.6%22/></svg>')] appearance-none bg-[length:12px] bg-[right_16px_center] bg-no-repeat pr-10",
+                  )}
+                >
                   <option value="">Choose your faculty</option>
                   {FACULTIES.map((f) => (
                     <option key={f}>{f}</option>
@@ -135,7 +219,10 @@ export function SignUpForm({ next }: { next?: string }) {
 
       <p className="mt-7 text-center text-[15px] text-ink-2">
         Already have an account?{" "}
-        <Link href={next ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in"} className="font-semibold text-ink underline decoration-sun decoration-[3px] underline-offset-4">
+        <Link
+          href={next ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in"}
+          className="font-semibold text-ink underline decoration-sun decoration-[3px] underline-offset-4"
+        >
           Sign in
         </Link>
       </p>

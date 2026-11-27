@@ -36,7 +36,8 @@ export async function signIn(_: FormState, form: FormData): Promise<FormState> {
     await startSession(user.id);
     logger.info("auth.sign_in", { userId: user.id });
   } catch (error) {
-    if (!(error instanceof AppError)) logger.error("auth.sign_in_failed", { message: String(error) });
+    if (!(error instanceof AppError))
+      logger.error("auth.sign_in_failed", { message: String(error) });
     return { error: message(error), values };
   }
   redirect(safeNext(form.get("next")));
@@ -51,7 +52,11 @@ export async function signUp(_: FormState, form: FormData): Promise<FormState> {
 
   try {
     await rateLimit("sign-up");
-    if (await users.byEmail(profile.email)) return { fieldErrors: { email: "That email already has an account. Sign in instead." }, values };
+    if (await users.byEmail(profile.email))
+      return {
+        fieldErrors: { email: "That email already has an account. Sign in instead." },
+        values,
+      };
     const normalisedMatric = matric ? normaliseMatric(matric) : undefined;
     if (normalisedMatric && (await users.byMatric(normalisedMatric))) {
       return { fieldErrors: { matric: "That matric number is already registered." }, values };
@@ -69,7 +74,8 @@ export async function signUp(_: FormState, form: FormData): Promise<FormState> {
     await startSession(id);
     logger.info("auth.sign_up", { userId: id, withMatric: Boolean(normalisedMatric) });
   } catch (error) {
-    if (!(error instanceof AppError)) logger.error("auth.sign_up_failed", { message: String(error) });
+    if (!(error instanceof AppError))
+      logger.error("auth.sign_up_failed", { message: String(error) });
     return { error: message(error), values };
   }
   redirect(safeNext(form.get("next")));

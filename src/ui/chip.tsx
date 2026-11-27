@@ -1,7 +1,15 @@
 import { cn } from "./cn";
 
 /** A parsed AI field: small uppercase label over a mono value. */
-export function FieldChip({ label, value, className }: { label: string; value: string; className?: string }) {
+export function FieldChip({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: string;
+  className?: string;
+}) {
   return (
     <span
       className={cn(
@@ -9,7 +17,9 @@ export function FieldChip({ label, value, className }: { label: string; value: s
         className,
       )}
     >
-      <span className="text-[11px] font-semibold tracking-[0.08em] text-paper/55 uppercase">{label}</span>
+      <span className="text-[11px] font-semibold tracking-[0.08em] text-paper/55 uppercase">
+        {label}
+      </span>
       <span className="font-mono text-[13px]">{value}</span>
     </span>
   );

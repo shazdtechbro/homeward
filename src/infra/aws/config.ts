@@ -10,5 +10,7 @@ export function awsClientConfig() {
   const region = env.HOMEWARD_REGION;
   const accessKeyId = env.HOMEWARD_ACCESS_KEY_ID;
   const secretAccessKey = env.HOMEWARD_SECRET_ACCESS_KEY;
-  return accessKeyId && secretAccessKey ? { region, credentials: { accessKeyId, secretAccessKey } } : { region };
+  return accessKeyId && secretAccessKey
+    ? { region, credentials: { accessKeyId, secretAccessKey } }
+    : { region };
 }

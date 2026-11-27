@@ -27,7 +27,11 @@ const PROMISES = [
 
 export function SafetySection() {
   return (
-    <section id="safety" aria-labelledby="safety-title" className="scroll-mt-20 bg-green px-5 py-28 text-paper sm:py-40">
+    <section
+      id="safety"
+      aria-labelledby="safety-title"
+      className="scroll-mt-20 bg-green px-5 py-28 text-paper sm:py-40"
+    >
       <div className="mx-auto grid max-w-[1180px] gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
         <SectionHeading
           id="safety-title"
@@ -48,7 +52,10 @@ export function SafetySection() {
               delay={i * 0.06}
               className="rounded-lg border border-paper/15 bg-paper/[0.06] p-6"
             >
-              <span aria-hidden className="grid size-11 place-items-center rounded-full bg-sun text-ink">
+              <span
+                aria-hidden
+                className="grid size-11 place-items-center rounded-full bg-sun text-ink"
+              >
                 <promise.Icon className="size-5" />
               </span>
               <h3 className="mt-5 text-[19px] font-semibold">{promise.title}</h3>

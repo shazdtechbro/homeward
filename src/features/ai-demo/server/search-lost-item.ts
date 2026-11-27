@@ -5,7 +5,11 @@ import type { Services } from "@/infra/container";
 import { foundAtLabel } from "@/lib/time";
 import type { ParsedField, SearchResponse } from "../schema";
 
-const CATEGORY_LABELS: Record<string, string> = { "id-card": "ID card", "laptop-sleeve": "Laptop sleeve", "power-bank": "Power bank" };
+const CATEGORY_LABELS: Record<string, string> = {
+  "id-card": "ID card",
+  "laptop-sleeve": "Laptop sleeve",
+  "power-bank": "Power bank",
+};
 
 const capitalise = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -16,10 +20,22 @@ function toFields(report: LostReport): ParsedField[] {
       value: CATEGORY_LABELS[report.category.value] ?? capitalise(report.category.value),
       evidence: report.category.evidence,
     },
-    report.colour && { label: "Colour", value: capitalise(report.colour.value), evidence: report.colour.evidence },
+    report.colour && {
+      label: "Colour",
+      value: capitalise(report.colour.value),
+      evidence: report.colour.evidence,
+    },
     report.brand && { label: "Brand", value: report.brand.value, evidence: report.brand.evidence },
-    report.place && { label: "Place", value: report.place.value.name, evidence: report.place.evidence },
-    report.when && { label: "When", value: capitalise(report.when.value), evidence: report.when.evidence },
+    report.place && {
+      label: "Place",
+      value: report.place.value.name,
+      evidence: report.place.evidence,
+    },
+    report.when && {
+      label: "When",
+      value: capitalise(report.when.value),
+      evidence: report.when.evidence,
+    },
   ];
   return fields.filter((field): field is ParsedField => field !== undefined);
 }

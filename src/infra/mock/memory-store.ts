@@ -2,7 +2,12 @@ import type { Claim, Notice } from "@/core/domain/claim";
 import type { Category } from "@/core/domain/item";
 import type { Listing } from "@/core/domain/listing";
 import type { User } from "@/core/domain/user";
-import type { ClaimRepository, ListingRepository, PhotoStorage, UserRepository } from "@/core/ports";
+import type {
+  ClaimRepository,
+  ListingRepository,
+  PhotoStorage,
+  UserRepository,
+} from "@/core/ports";
 
 type State = {
   users: Map<string, User>;
@@ -22,7 +27,8 @@ const state: State = (globalState.__homeward ??= {
   photos: new Map(),
 });
 
-const newestFirst = <T extends { createdAt: Date }>(a: T, b: T) => b.createdAt.getTime() - a.createdAt.getTime();
+const newestFirst = <T extends { createdAt: Date }>(a: T, b: T) =>
+  b.createdAt.getTime() - a.createdAt.getTime();
 
 export class MemoryListingRepository implements ListingRepository {
   async create(listing: Listing) {

@@ -36,7 +36,10 @@ export function ParsedFields({ fields }: { fields: ParsedField[] }) {
 
 export function AiAvatar() {
   return (
-    <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-green text-paper">
+    <span
+      aria-hidden
+      className="grid size-9 shrink-0 place-items-center rounded-full bg-green text-paper"
+    >
       <svg viewBox="0 0 20 20" className="size-4.5 fill-current">
         <path d="M10 1.5 12.2 7.8 18.5 10l-6.3 2.2L10 18.5l-2.2-6.3L1.5 10l6.3-2.2z" />
       </svg>

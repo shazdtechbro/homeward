@@ -15,7 +15,13 @@ type CountUpProps = {
 const defaultFormat = (value: number) => Math.round(value).toLocaleString("en-NG");
 
 /** Writes straight to the text node, so counting never re-renders React. */
-export function CountUp({ to, duration = 1.6, whenInView = false, format = defaultFormat, className }: CountUpProps) {
+export function CountUp({
+  to,
+  duration = 1.6,
+  whenInView = false,
+  format = defaultFormat,
+  className,
+}: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.6 });
   const reduce = useReducedMotion();

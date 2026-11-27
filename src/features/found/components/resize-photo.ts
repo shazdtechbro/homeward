@@ -11,6 +11,10 @@ export async function resizePhoto(file: File, maxSide = 1280, quality = 0.84): P
   canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   bitmap.close();
   return new Promise((resolve, reject) =>
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("Could not read that photo."))), "image/jpeg", quality),
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error("Could not read that photo."))),
+      "image/jpeg",
+      quality,
+    ),
   );
 }

@@ -37,7 +37,9 @@ export function HeroIllustration() {
           <Layer key={layer.id} progress={scrollYProgress} travel={reduce ? 0 : layer.travel}>
             <Picture
               name="hero-halftone"
-              alt={i === 0 ? "Illustration of students walking through a sunny UNILORIN courtyard" : ""}
+              alt={
+                i === 0 ? "Illustration of students walking through a sunny UNILORIN courtyard" : ""
+              }
               sizes={SIZES}
               priority
               className="absolute inset-0"

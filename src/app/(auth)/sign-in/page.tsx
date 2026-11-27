@@ -7,7 +7,11 @@ import { currentUser } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Sign in · Homeward" };
 
-export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
   const { next } = await searchParams;
   if (await currentUser()) redirect(safeNext(next));
 
@@ -17,7 +21,11 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
       quote="I got my laptop back the morning of my exam. Someone just… returned it."
       quoteBy="Femi, 400L Mechanical Engineering"
       chips={[
-        { icon: "sparkles", text: "92% match · Black HP laptop", className: "top-[14%] left-[10%]" },
+        {
+          icon: "sparkles",
+          text: "92% match · Black HP laptop",
+          className: "top-[14%] left-[10%]",
+        },
         { icon: "check", text: "Ownership proved", className: "top-[30%] right-[8%]" },
       ]}
     >

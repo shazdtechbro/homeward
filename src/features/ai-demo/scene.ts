@@ -14,7 +14,8 @@ export type Scene = {
 export const PHASES = ["typing", "understanding", "scanning", "results", "verified"] as const;
 export type Phase = (typeof PHASES)[number];
 
-export const reached = (phase: Phase, target: Phase) => PHASES.indexOf(phase) >= PHASES.indexOf(target);
+export const reached = (phase: Phase, target: Phase) =>
+  PHASES.indexOf(phase) >= PHASES.indexOf(target);
 
 /** How long each phase holds before moving on, in ms. */
 export const PHASE_HOLD: Record<Exclude<Phase, "typing">, number> = {

@@ -2,7 +2,12 @@
 
 import { motion } from "motion/react";
 
-const COLOURS = ["var(--color-coral)", "var(--color-sun)", "var(--color-green)", "var(--color-sky)"];
+const COLOURS = [
+  "var(--color-coral)",
+  "var(--color-sun)",
+  "var(--color-green)",
+  "var(--color-sky)",
+];
 const PIECES = 22;
 
 /** Deterministic pseudo-random in [0, 1) so the burst looks organic but never shifts between renders. */
@@ -29,10 +34,18 @@ export function Confetti() {
       {pieces.map((piece, i) => (
         <motion.span
           key={i}
-          className={piece.round ? "absolute size-2 rounded-full" : "absolute h-1.5 w-3 rounded-[2px]"}
+          className={
+            piece.round ? "absolute size-2 rounded-full" : "absolute h-1.5 w-3 rounded-[2px]"
+          }
           style={{ background: piece.colour }}
           initial={{ x: 0, y: 0, opacity: 1, rotate: 0, scale: 0.6 }}
-          animate={{ x: piece.x, y: [0, piece.y, piece.y + 40], opacity: [1, 1, 0], rotate: piece.rotate, scale: 1 }}
+          animate={{
+            x: piece.x,
+            y: [0, piece.y, piece.y + 40],
+            opacity: [1, 1, 0],
+            rotate: piece.rotate,
+            scale: 1,
+          }}
           transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
         />
       ))}

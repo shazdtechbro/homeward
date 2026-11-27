@@ -10,7 +10,20 @@ import type { ImageAnalysis, ImageAnalyzer } from "@/core/ports";
 import { logger } from "@/lib/logger";
 import type { Bedrock } from "./bedrock";
 
-const COLOURS = ["black", "white", "grey", "silver", "blue", "green", "red", "orange", "brown", "pink", "yellow", "purple"];
+const COLOURS = [
+  "black",
+  "white",
+  "grey",
+  "silver",
+  "blue",
+  "green",
+  "red",
+  "orange",
+  "brown",
+  "pink",
+  "yellow",
+  "purple",
+];
 
 /** UNILORIN matric numbers, e.g. 19/52HA041. */
 const MATRIC = /\b\d{2}\s*\/\s*\d{2}[A-Z]{2}\d{3}\b/i;
@@ -104,8 +117,15 @@ export class AwsImageAnalyzer implements ImageAnalyzer {
       settle(this.rekognitionLabels(bytes), "labels"),
     ]);
 
-    const category = (CATEGORIES as readonly string[]).includes(nova?.category ?? "") ? (nova!.category as Category) : undefined;
-    const matric = category === "id-card" ? MATRIC.exec(nova?.matric ?? "")?.[0].replace(/\s/g, "").toUpperCase() : undefined;
+    const category = (CATEGORIES as readonly string[]).includes(nova?.category ?? "")
+      ? (nova!.category as Category)
+      : undefined;
+    const matric =
+      category === "id-card"
+        ? MATRIC.exec(nova?.matric ?? "")?.[0]
+            .replace(/\s/g, "")
+            .toUpperCase()
+        : undefined;
     const labels = [...new Set([...(extraLabels ?? []), ...(nova?.labels ?? [])])].slice(0, 8);
 
     return {

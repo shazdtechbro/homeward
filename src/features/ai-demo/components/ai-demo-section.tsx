@@ -3,7 +3,11 @@ import { ChatDemo } from "./chat-demo";
 
 export function AiDemoSection() {
   return (
-    <section id="demo" aria-labelledby="demo-title" className="relative scroll-mt-24 px-4 py-28 sm:py-40">
+    <section
+      id="demo"
+      aria-labelledby="demo-title"
+      className="relative scroll-mt-24 px-4 py-28 sm:py-40"
+    >
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(40%_35%_at_18%_38%,rgba(169,211,214,0.55),transparent),radial-gradient(35%_30%_at_85%_60%,rgba(246,192,74,0.4),transparent),radial-gradient(30%_25%_at_48%_85%,rgba(234,90,47,0.14),transparent)]" />
       </div>

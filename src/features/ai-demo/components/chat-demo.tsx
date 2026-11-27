@@ -127,21 +127,25 @@ export function ChatDemo() {
             )}
           </AnimatePresence>
         </div>
-
       </GlassCard>
 
       <p className="sr-only" aria-live="polite">
         {userDriven && result && reached(phase, "results") ? describe(result) : ""}
       </p>
 
-      <TryItForm onSearch={runUserSearch} error={error} onReplay={userDriven ? replayDemo : undefined} />
+      <TryItForm
+        onSearch={runUserSearch}
+        error={error}
+        onReplay={userDriven ? replayDemo : undefined}
+      />
     </div>
   );
 }
 
 function describe(result: NonNullable<ReturnType<typeof useDemoTimeline>["result"]>) {
   const { outcome } = result;
-  if (outcome.kind === "private") return "This looks like an ID card. Matric Match will email the owner privately.";
+  if (outcome.kind === "private")
+    return "This looks like an ID card. Matric Match will email the owner privately.";
   if (outcome.kind === "none") return "No matches yet.";
   return `${outcome.matches.length} possible matches. Best: ${outcome.matches[0]!.title}, ${outcome.matches[0]!.score}% match.`;
 }

@@ -11,7 +11,14 @@ type ItemPhotoProps = {
 };
 
 /** Uploaded photos stream from /api/photos (private bucket); demo items use the built assets. */
-export function ItemPhoto({ imageKey, alt, sizes, className, imgClassName, priority }: ItemPhotoProps) {
+export function ItemPhoto({
+  imageKey,
+  alt,
+  sizes,
+  className,
+  imgClassName,
+  priority,
+}: ItemPhotoProps) {
   if (imageKey.startsWith("up/")) {
     return (
       <span className={cn("block", className)}>

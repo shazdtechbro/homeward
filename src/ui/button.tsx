@@ -15,9 +15,18 @@ const variants: Record<Variant, string> = {
 
 const sizes = { md: "h-11 px-5", lg: "h-14 px-7 text-base" } as const;
 
-type CommonProps = { variant?: Variant; size?: keyof typeof sizes; className?: string; children: React.ReactNode };
+type CommonProps = {
+  variant?: Variant;
+  size?: keyof typeof sizes;
+  className?: string;
+  children: React.ReactNode;
+};
 
-export function buttonClass({ variant = "ink", size = "md", className }: Omit<CommonProps, "children">) {
+export function buttonClass({
+  variant = "ink",
+  size = "md",
+  className,
+}: Omit<CommonProps, "children">) {
   return cn(base, variants[variant], sizes[size], className);
 }
 

@@ -16,7 +16,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ key: strin
 
   if (listing.category === "id-card") {
     const user = await currentUser();
-    const allowed = user && (user.id === listing.finder.userId || (user.matric && user.matric === listing.matric));
+    const allowed =
+      user &&
+      (user.id === listing.finder.userId || (user.matric && user.matric === listing.matric));
     if (!allowed) return new Response("Private", { status: 403 });
   }
 
@@ -25,7 +27,8 @@ export async function GET(_: Request, { params }: { params: Promise<{ key: strin
   return new Response(Buffer.from(photo.bytes), {
     headers: {
       "Content-Type": photo.contentType,
-      "Cache-Control": listing.category === "id-card" ? "private, no-store" : "public, max-age=86400, immutable",
+      "Cache-Control":
+        listing.category === "id-card" ? "private, no-store" : "public, max-age=86400, immutable",
       "X-Content-Type-Options": "nosniff",
     },
   });

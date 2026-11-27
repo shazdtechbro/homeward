@@ -1,4 +1,8 @@
-const timeFormat = new Intl.DateTimeFormat("en-NG", { hour: "numeric", minute: "2-digit", hour12: true });
+const timeFormat = new Intl.DateTimeFormat("en-NG", {
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+});
 
 /** "10:14 pm" today, "yesterday", then "3 days ago". */
 export function foundAtLabel(date: Date, now = new Date()) {

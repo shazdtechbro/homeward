@@ -62,7 +62,11 @@ export function TryItForm({ onSearch, error, onReplay }: TryItFormProps) {
         </div>
       </form>
 
-      <p id={errorId} role="alert" className="mt-3 min-h-6 text-center text-[14px] font-medium text-error">
+      <p
+        id={errorId}
+        role="alert"
+        className="mt-3 min-h-6 text-center text-[14px] font-medium text-error"
+      >
         {message}
       </p>
 

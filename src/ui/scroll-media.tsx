@@ -16,7 +16,11 @@ export function ScrollMedia({ children, className, kenBurns = true }: ScrollMedi
   const inView = useInView(ref);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "start 0.35"] });
   const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
-  const clipPath = useTransform(scrollYProgress, [0, 1], ["inset(12% 8% 12% 8% round 32px)", "inset(0% 0% 0% 0% round 32px)"]);
+  const clipPath = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["inset(12% 8% 12% 8% round 32px)", "inset(0% 0% 0% 0% round 32px)"],
+  );
 
   return (
     <motion.div
@@ -25,7 +29,9 @@ export function ScrollMedia({ children, className, kenBurns = true }: ScrollMedi
       className={cn("overflow-hidden rounded-lg", className)}
       style={reduce ? undefined : { scale, clipPath }}
     >
-      <div className={cn("size-full", kenBurns && "animate-ken-burns will-change-transform")}>{children}</div>
+      <div className={cn("size-full", kenBurns && "animate-ken-burns will-change-transform")}>
+        {children}
+      </div>
     </motion.div>
   );
 }

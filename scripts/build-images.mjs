@@ -35,7 +35,11 @@ function widthsFor(sourceWidth) {
 }
 
 async function blurDataUrl(image) {
-  const buffer = await image.clone().resize(16, null, { fit: "inside" }).webp({ quality: 40 }).toBuffer();
+  const buffer = await image
+    .clone()
+    .resize(16, null, { fit: "inside" })
+    .webp({ quality: 40 })
+    .toBuffer();
   return `data:image/webp;base64,${buffer.toString("base64")}`;
 }
 
@@ -52,8 +56,16 @@ async function buildVariants(name, image, sourceMtime, previous) {
   const widths = widthsFor(width);
   await Promise.all(
     widths.flatMap((w) => [
-      image.clone().resize(w).avif({ quality: 52, effort: 5 }).toFile(path.join(OUT, `${name}-${w}.avif`)),
-      image.clone().resize(w).webp({ quality: 74 }).toFile(path.join(OUT, `${name}-${w}.webp`)),
+      image
+        .clone()
+        .resize(w)
+        .avif({ quality: 52, effort: 5 })
+        .toFile(path.join(OUT, `${name}-${w}.avif`)),
+      image
+        .clone()
+        .resize(w)
+        .webp({ quality: 74 })
+        .toFile(path.join(OUT, `${name}-${w}.webp`)),
     ]),
   );
   console.log(`  ${name.padEnd(28)} ${width}×${height} → ${widths.join(", ")}`);

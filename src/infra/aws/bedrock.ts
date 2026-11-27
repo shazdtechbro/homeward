@@ -37,7 +37,8 @@ export class Bedrock {
     const text = result.output?.message?.content?.map((c) => c.text ?? "").join("") ?? "";
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
-    if (start < 0 || end < start) throw new Error(`Model did not return JSON: ${text.slice(0, 120)}`);
+    if (start < 0 || end < start)
+      throw new Error(`Model did not return JSON: ${text.slice(0, 120)}`);
     return JSON.parse(text.slice(start, end + 1)) as T;
   }
 
@@ -50,7 +51,9 @@ export class Bedrock {
         body: JSON.stringify({ inputText: text.slice(0, 2000), dimensions: 512, normalize: true }),
       }),
     );
-    const { embedding } = JSON.parse(new TextDecoder().decode(result.body)) as { embedding: number[] };
+    const { embedding } = JSON.parse(new TextDecoder().decode(result.body)) as {
+      embedding: number[];
+    };
     return embedding;
   }
 }
@@ -89,18 +92,33 @@ export class NovaReportParser implements ReportParser {
   async parse(text: string): Promise<LostReport> {
     const basic = await this.fallback.parse(text);
     try {
-      const nova = await this.bedrock.json<NovaReport>(PARSE_PROMPT, [{ text: `Report: """${text}"""` }]);
-      const grounded = <T>(field: NovaField<T> | undefined, valid: (v: T) => boolean): Extracted<T> | undefined => {
+      const nova = await this.bedrock.json<NovaReport>(PARSE_PROMPT, [
+        { text: `Report: """${text}"""` },
+      ]);
+      const grounded = <T>(
+        field: NovaField<T> | undefined,
+        valid: (v: T) => boolean,
+      ): Extracted<T> | undefined => {
         if (!field || field.value == null || !valid(field.value)) return undefined;
-        const evidence = typeof field.evidence === "string" && text.toLowerCase().includes(field.evidence.toLowerCase()) ? field.evidence : undefined;
+        const evidence =
+          typeof field.evidence === "string" &&
+          text.toLowerCase().includes(field.evidence.toLowerCase())
+            ? field.evidence
+            : undefined;
         return evidence ? { value: field.value, evidence } : undefined;
       };
       const place = grounded(nova.place, (v) => typeof v === "string" && v.length > 1);
-      const knownPlace = place && Object.values(PLACES).find((p) => p.name.toLowerCase() === String(place.value).toLowerCase());
+      const knownPlace =
+        place &&
+        Object.values(PLACES).find(
+          (p) => p.name.toLowerCase() === String(place.value).toLowerCase(),
+        );
 
       return {
         text,
-        category: grounded(nova.category, (v) => (CATEGORIES as readonly string[]).includes(v)) ?? basic.category,
+        category:
+          grounded(nova.category, (v) => (CATEGORIES as readonly string[]).includes(v)) ??
+          basic.category,
         colour: grounded(nova.colour, (v) => typeof v === "string") ?? basic.colour,
         brand: grounded(nova.brand, (v) => typeof v === "string") ?? basic.brand,
         place: knownPlace ? { value: knownPlace, evidence: place.evidence } : basic.place,
@@ -140,7 +158,11 @@ export class NovaAnswerJudge implements AnswerJudge {
     try {
       const { match } = await this.bedrock.json<{ match: boolean }>(
         JUDGE_PROMPT,
-        [{ text: `Question: ${question}\nTrue answer: ${expected}\nClaimant's answer: """${given.slice(0, 200)}"""` }],
+        [
+          {
+            text: `Question: ${question}\nTrue answer: ${expected}\nClaimant's answer: """${given.slice(0, 200)}"""`,
+          },
+        ],
         30,
       );
       return match === true;

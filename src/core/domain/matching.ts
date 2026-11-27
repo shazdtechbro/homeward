@@ -68,7 +68,10 @@ export function rankMatches(
     .map((item) => {
       const fields = scoreCandidate(report, item);
       const sim = similarity?.(item);
-      const score = sim === undefined ? fields : (1 - SEMANTIC_WEIGHT) * fields + SEMANTIC_WEIGHT * Math.max(0, sim);
+      const score =
+        sim === undefined
+          ? fields
+          : (1 - SEMANTIC_WEIGHT) * fields + SEMANTIC_WEIGHT * Math.max(0, sim);
       return { item, score: Math.round(score * 100) / 100 };
     })
     .filter((match) => match.score >= floor)

@@ -1,4 +1,5 @@
-export type ErrorCode = "invalid_input" | "unauthorized" | "not_found" | "rate_limited" | "internal";
+export type ErrorCode =
+  "invalid_input" | "unauthorized" | "not_found" | "rate_limited" | "internal";
 
 const STATUS: Record<ErrorCode, number> = {
   invalid_input: 400,
@@ -24,7 +25,9 @@ export class AppError extends Error {
 
 export function toErrorResponse(error: unknown) {
   const appError =
-    error instanceof AppError ? error : new AppError("internal", "Something went wrong on our side.");
+    error instanceof AppError
+      ? error
+      : new AppError("internal", "Something went wrong on our side.");
   return Response.json(
     { error: { code: appError.code, message: appError.message } },
     { status: appError.status },

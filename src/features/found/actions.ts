@@ -15,14 +15,20 @@ import { currentUser } from "@/lib/session";
 import { foundItemSchema, MAX_PHOTO_BYTES, WHEN_OPTIONS } from "./schema";
 
 const checkRate = createRateLimiter({ limit: 8, windowMs: 60_000 });
-// Each analysis calls Rekognition and Nova, so it is capped harder than plain page views.
+// Each analysis is a vision-model call, so it is capped harder than plain page views.
 const checkAnalyseRate = createRateLimiter({ limit: 12, windowMs: 60_000 });
 
 async function readPhoto(form: FormData) {
   const photo = form.get("photo");
-  if (!(photo instanceof File) || photo.size === 0) throw new AppError("invalid_input", "Add a photo of the item.");
-  if (!photo.type.startsWith("image/")) throw new AppError("invalid_input", "That file isn’t an image.");
-  if (photo.size > MAX_PHOTO_BYTES) throw new AppError("invalid_input", "That photo is too large. Try again: we shrink it for you.");
+  if (!(photo instanceof File) || photo.size === 0)
+    throw new AppError("invalid_input", "Add a photo of the item.");
+  if (!photo.type.startsWith("image/"))
+    throw new AppError("invalid_input", "That file isn’t an image.");
+  if (photo.size > MAX_PHOTO_BYTES)
+    throw new AppError(
+      "invalid_input",
+      "That photo is too large. Try again: we shrink it for you.",
+    );
   return { bytes: new Uint8Array(await photo.arrayBuffer()), type: photo.type };
 }
 
@@ -41,7 +47,9 @@ export async function analysePhoto(form: FormData): Promise<ImageAnalysis> {
 }
 
 export async function logFoundItem(_: FormState, form: FormData): Promise<FormState> {
-  const parsed = foundItemSchema.safeParse(Object.fromEntries([...form.entries()].filter(([, v]) => typeof v === "string")));
+  const parsed = foundItemSchema.safeParse(
+    Object.fromEntries([...form.entries()].filter(([, v]) => typeof v === "string")),
+  );
   if (!parsed.success) return { fieldErrors: fieldErrors(parsed.error) };
   const input = parsed.data;
   const services = getServices();
@@ -64,7 +72,8 @@ export async function logFoundItem(_: FormState, form: FormData): Promise<FormSt
         ? { name: input.placeOther!, zone: "other" }
         : PLACES[input.place as keyof typeof PLACES];
     const now = Date.now();
-    const matric = input.category === "id-card" && input.matric ? normaliseMatric(input.matric) : undefined;
+    const matric =
+      input.category === "id-card" && input.matric ? normaliseMatric(input.matric) : undefined;
 
     const listing: Listing = {
       id,
@@ -79,7 +88,12 @@ export async function logFoundItem(_: FormState, form: FormData): Promise<FormSt
       description: input.description ?? "",
       check: { question: input.question, answer: input.answer },
       matric,
-      finder: { name: input.contactName, phone: input.contactPhone, email: input.contactEmail, userId: user?.id },
+      finder: {
+        name: input.contactName,
+        phone: input.contactPhone,
+        email: input.contactEmail,
+        userId: user?.id,
+      },
       createdAt: new Date(now),
       manageToken: user ? undefined : crypto.randomUUID().replaceAll("-", ""),
     };
@@ -100,12 +114,19 @@ export async function logFoundItem(_: FormState, form: FormData): Promise<FormSt
         });
       }
     }
-    logger.info("found.logged", { id, category: listing.category, guest: !user, privateMatch: Boolean(matric) });
+    logger.info("found.logged", {
+      id,
+      category: listing.category,
+      guest: !user,
+      privateMatch: Boolean(matric),
+    });
 
     if (listing.manageToken) destination += `&key=${listing.manageToken}`;
   } catch (error) {
     if (!(error instanceof AppError)) logger.error("found.log_failed", { message: String(error) });
-    return { error: error instanceof AppError ? error.message : "We couldn’t save that. Try again." };
+    return {
+      error: error instanceof AppError ? error.message : "We couldn’t save that. Try again.",
+    };
   }
   redirect(destination);
 }

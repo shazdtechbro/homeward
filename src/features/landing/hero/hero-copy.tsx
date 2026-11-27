@@ -7,7 +7,6 @@ import { RiseWords } from "./rise-words";
 const delay = (seconds: number) => ({ animationDelay: `${seconds}s` });
 
 export function HeroCopy() {
-
   return (
     <div className="mx-auto flex max-w-[1180px] flex-col items-center px-5 text-center">
       <div className="animate-fade-up" style={delay(0.05)}>
@@ -19,7 +18,7 @@ export function HeroCopy() {
 
       <h1
         id="hero-title"
-        className="font-display-tight mt-7 text-[52px] sm:text-[84px] lg:text-[124px]"
+        className="mt-7 font-display-tight text-[52px] sm:text-[84px] lg:text-[124px]"
       >
         {/* Explicit lines keep the line count identical before and after the web font loads (no CLS). */}
         <RiseWords text="Everything lost" delay={0.15} />
@@ -31,14 +30,14 @@ export function HeroCopy() {
       </h1>
 
       <p
-        className="animate-fade-up mt-7 max-w-[34rem] text-[18px] leading-relaxed font-medium text-ink-2 sm:text-[19px]"
+        className="mt-7 max-w-[34rem] animate-fade-up text-[18px] leading-relaxed font-medium text-ink-2 sm:text-[19px]"
         style={delay(0.75)}
       >
         Snap it, match it, prove it, collect it. The safest way to return lost things at UNILORIN.
       </p>
 
       <div
-        className="animate-fade-up mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
+        className="mt-9 flex w-full animate-fade-up flex-col gap-3 sm:w-auto sm:flex-row"
         style={delay(0.9)}
       >
         <ButtonLink href="/found/new" size="lg" variant="coral">

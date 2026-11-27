@@ -44,8 +44,10 @@ export function ScanStage({ scanned }: { scanned: number }) {
       </div>
 
       <div className="text-center sm:text-left">
-        <p className="text-[13px] font-semibold tracking-[0.08em] text-ink-2 uppercase">Smart Match</p>
-        <p className="font-display-tight mt-2 text-[44px] sm:text-[56px]">
+        <p className="text-[13px] font-semibold tracking-[0.08em] text-ink-2 uppercase">
+          Smart Match
+        </p>
+        <p className="mt-2 font-display-tight text-[44px] sm:text-[56px]">
           <CountUp to={scanned} duration={2.4} />
         </p>
         <p className="mt-2 max-w-[16rem] text-[15px] font-medium text-ink-2">

@@ -10,7 +10,11 @@
 import { randomBytes } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { BedrockRuntimeClient, ConverseCommand, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import {
+  BedrockRuntimeClient,
+  ConverseCommand,
+  InvokeModelCommand,
+} from "@aws-sdk/client-bedrock-runtime";
 import { CreateTableCommand, DescribeTableCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DetectLabelsCommand, RekognitionClient } from "@aws-sdk/client-rekognition";
 import {
@@ -33,17 +37,23 @@ const embedModel = env.HOMEWARD_EMBED_MODEL;
 const rekognitionRegion = env.HOMEWARD_REKOGNITION_REGION;
 
 if (!env.HOMEWARD_ACCESS_KEY_ID || !env.HOMEWARD_SECRET_ACCESS_KEY) {
-  console.error("✗ Put HOMEWARD_ACCESS_KEY_ID and HOMEWARD_SECRET_ACCESS_KEY in .env.local first (see docs/AWS-SETUP.md, Part 4).");
+  console.error(
+    "✗ Put HOMEWARD_ACCESS_KEY_ID and HOMEWARD_SECRET_ACCESS_KEY in .env.local first (see docs/AWS-SETUP.md, Part 4).",
+  );
   process.exit(1);
 }
 
 const config = {
   region,
-  credentials: { accessKeyId: env.HOMEWARD_ACCESS_KEY_ID, secretAccessKey: env.HOMEWARD_SECRET_ACCESS_KEY },
+  credentials: {
+    accessKeyId: env.HOMEWARD_ACCESS_KEY_ID,
+    secretAccessKey: env.HOMEWARD_SECRET_ACCESS_KEY,
+  },
 };
 
 const ok = (msg) => console.log(`  ✓ ${msg}`);
-const fail = (msg, error) => console.log(`  ✗ ${msg}\n      ${error?.name ?? ""}: ${error?.message ?? error}`);
+const fail = (msg, error) =>
+  console.log(`  ✗ ${msg}\n      ${error?.name ?? ""}: ${error?.message ?? error}`);
 
 async function setEnv(key, value) {
   let text = "";
@@ -51,7 +61,9 @@ async function setEnv(key, value) {
     text = await readFile(ENV_FILE, "utf8");
   } catch {}
   const line = `${key}=${value}`;
-  text = new RegExp(`^${key}=.*$`, "m").test(text) ? text.replace(new RegExp(`^${key}=.*$`, "m"), line) : `${text.trimEnd()}\n${line}\n`;
+  text = new RegExp(`^${key}=.*$`, "m").test(text)
+    ? text.replace(new RegExp(`^${key}=.*$`, "m"), line)
+    : `${text.trimEnd()}\n${line}\n`;
   await writeFile(ENV_FILE, text);
 }
 
@@ -62,7 +74,10 @@ async function ensureTable() {
       new CreateTableCommand({
         TableName: table,
         BillingMode: "PAY_PER_REQUEST",
-        AttributeDefinitions: ["pk", "sk", "gsi1pk", "gsi1sk"].map((name) => ({ AttributeName: name, AttributeType: "S" })),
+        AttributeDefinitions: ["pk", "sk", "gsi1pk", "gsi1sk"].map((name) => ({
+          AttributeName: name,
+          AttributeType: "S",
+        })),
         KeySchema: [
           { AttributeName: "pk", KeyType: "HASH" },
           { AttributeName: "sk", KeyType: "RANGE" },
@@ -85,7 +100,9 @@ async function ensureTable() {
   }
   for (;;) {
     const { Table } = await db.send(new DescribeTableCommand({ TableName: table }));
-    const indexReady = (Table.GlobalSecondaryIndexes ?? []).every((i) => i.IndexStatus === "ACTIVE");
+    const indexReady = (Table.GlobalSecondaryIndexes ?? []).every(
+      (i) => i.IndexStatus === "ACTIVE",
+    );
     if (Table.TableStatus === "ACTIVE" && indexReady) break;
     process.stdout.write(".");
     await new Promise((r) => setTimeout(r, 3000));
@@ -108,17 +125,31 @@ async function ensureBucket() {
   } else {
     bucket = `homeward-photos-${randomBytes(4).toString("hex")}`;
   }
-  await s3.send(new CreateBucketCommand({ Bucket: bucket, ...(region === "us-east-1" ? {} : { CreateBucketConfiguration: { LocationConstraint: region } }) }));
+  await s3.send(
+    new CreateBucketCommand({
+      Bucket: bucket,
+      ...(region === "us-east-1"
+        ? {}
+        : { CreateBucketConfiguration: { LocationConstraint: region } }),
+    }),
+  );
   await s3.send(
     new PutPublicAccessBlockCommand({
       Bucket: bucket,
-      PublicAccessBlockConfiguration: { BlockPublicAcls: true, IgnorePublicAcls: true, BlockPublicPolicy: true, RestrictPublicBuckets: true },
+      PublicAccessBlockConfiguration: {
+        BlockPublicAcls: true,
+        IgnorePublicAcls: true,
+        BlockPublicPolicy: true,
+        RestrictPublicBuckets: true,
+      },
     }),
   );
   await s3.send(
     new PutBucketEncryptionCommand({
       Bucket: bucket,
-      ServerSideEncryptionConfiguration: { Rules: [{ ApplyServerSideEncryptionByDefault: { SSEAlgorithm: "AES256" } }] },
+      ServerSideEncryptionConfiguration: {
+        Rules: [{ ApplyServerSideEncryptionByDefault: { SSEAlgorithm: "AES256" } }],
+      },
     }),
   );
   await setEnv("HOMEWARD_BUCKET", bucket);
@@ -126,13 +157,16 @@ async function ensureBucket() {
 }
 
 async function ensureSecret() {
-  if (env.HOMEWARD_SESSION_SECRET && env.HOMEWARD_SESSION_SECRET.length >= 32) return ok("Session secret already set");
+  if (env.HOMEWARD_SESSION_SECRET && env.HOMEWARD_SESSION_SECRET.length >= 32)
+    return ok("Session secret already set");
   await setEnv("HOMEWARD_SESSION_SECRET", randomBytes(32).toString("base64url"));
   ok("Session secret generated");
 }
 
 async function checkAi() {
-  const sample = await sharp(path.join(ROOT, "public/images/found-calculator-216.webp")).jpeg().toBuffer();
+  const sample = await sharp(path.join(ROOT, "public/images/found-calculator-216.webp"))
+    .jpeg()
+    .toBuffer();
   const bedrock = new BedrockRuntimeClient(config);
 
   try {
@@ -142,7 +176,10 @@ async function checkAi() {
         messages: [
           {
             role: "user",
-            content: [{ image: { format: "jpeg", source: { bytes: sample } } }, { text: "Name this object in three words." }],
+            content: [
+              { image: { format: "jpeg", source: { bytes: sample } } },
+              { text: "Name this object in three words." },
+            ],
           },
         ],
         inferenceConfig: { maxTokens: 20 },
@@ -150,7 +187,10 @@ async function checkAi() {
     );
     ok(`Bedrock ${textModel} sees: ${result.output.message.content[0].text.trim()}`);
   } catch (error) {
-    fail(`Bedrock ${textModel} (the app falls back to its built-in parser while this is off)`, error);
+    fail(
+      `Bedrock ${textModel} (the app falls back to its built-in parser while this is off)`,
+      error,
+    );
   }
 
   if (rekognitionRegion) {

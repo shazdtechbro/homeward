@@ -47,11 +47,16 @@ export function PasswordInput({ showStrength, className, ...props }: PasswordInp
             {[0, 1, 2, 3].map((i) => (
               <span
                 key={i}
-                className={cn("h-1.5 flex-1 rounded-full transition-colors duration-300", i < score ? COLOURS[score] : "bg-ink/10")}
+                className={cn(
+                  "h-1.5 flex-1 rounded-full transition-colors duration-300",
+                  i < score ? COLOURS[score] : "bg-ink/10",
+                )}
               />
             ))}
           </div>
-          <span className="w-[84px] text-right text-[12px] font-semibold text-ink-2">{LABELS[score]}</span>
+          <span className="w-[84px] text-right text-[12px] font-semibold text-ink-2">
+            {LABELS[score]}
+          </span>
         </div>
       )}
     </div>

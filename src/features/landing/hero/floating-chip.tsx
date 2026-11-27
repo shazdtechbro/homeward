@@ -3,7 +3,12 @@
 import { motion } from "motion/react";
 import { cn } from "@/ui/cn";
 
-type FloatingChipProps = { className?: string; delay: number; drift: number; children: React.ReactNode };
+type FloatingChipProps = {
+  className?: string;
+  delay: number;
+  drift: number;
+  children: React.ReactNode;
+};
 
 export function FloatingChip({ className, delay, drift, children }: FloatingChipProps) {
   return (
@@ -14,7 +19,7 @@ export function FloatingChip({ className, delay, drift, children }: FloatingChip
       className={cn("absolute z-10", className)}
     >
       <div
-        className="glass animate-drift rounded-full px-4 py-2.5 text-[13px] font-medium whitespace-nowrap text-ink shadow-soft sm:text-[15px]"
+        className="animate-drift rounded-full px-4 py-2.5 text-[13px] font-medium whitespace-nowrap text-ink shadow-soft glass sm:text-[15px]"
         style={{ animationDelay: `${drift}s` }}
       >
         {children}

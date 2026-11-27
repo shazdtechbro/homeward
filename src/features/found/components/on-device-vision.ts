@@ -34,7 +34,17 @@ function dominantColour(img: HTMLImageElement): string | undefined {
   canvas.height = size;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   if (!ctx) return undefined;
-  ctx.drawImage(img, img.naturalWidth * 0.25, img.naturalHeight * 0.25, img.naturalWidth * 0.5, img.naturalHeight * 0.5, 0, 0, size, size);
+  ctx.drawImage(
+    img,
+    img.naturalWidth * 0.25,
+    img.naturalHeight * 0.25,
+    img.naturalWidth * 0.5,
+    img.naturalHeight * 0.5,
+    0,
+    0,
+    size,
+    size,
+  );
   const { data } = ctx.getImageData(0, 0, size, size);
   const votes = new Map<string, number>();
   for (let i = 0; i < data.length; i += 4) {

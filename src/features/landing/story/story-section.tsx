@@ -52,7 +52,7 @@ export function StorySection() {
       <div className="relative mx-auto grid max-w-[1180px] items-center gap-10 px-5 lg:grid-cols-[1fr_minmax(0,400px)_1fr] lg:gap-14">
         <div className="lg:pb-24">
           <p className="text-[13px] font-bold tracking-[0.12em] text-ink uppercase">Real returns</p>
-          <h2 id="stories-title" className="font-display-tight mt-4 text-[44px] sm:text-[60px]">
+          <h2 id="stories-title" className="mt-4 font-display-tight text-[44px] sm:text-[60px]">
             Lost on Monday.
             <span className="block italic">Home by Monday.</span>
           </h2>
@@ -69,7 +69,7 @@ export function StorySection() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="animate-ken-burns size-full">
+                <div className="size-full animate-ken-burns">
                   <Picture
                     name={story.image}
                     alt={story.alt}
@@ -80,7 +80,7 @@ export function StorySection() {
                 </div>
               </motion.div>
             </AnimatePresence>
-            <span className="glass absolute top-4 left-4 rounded-full px-3 py-1.5 font-mono text-[12px]">
+            <span className="absolute top-4 left-4 rounded-full px-3 py-1.5 font-mono text-[12px] glass">
               Returned in {story.elapsed}
             </span>
           </div>
@@ -99,8 +99,10 @@ export function StorySection() {
               <p className="text-[15px] font-semibold">
                 {story.name}, <span className="text-ink/70">{story.detail}</span>
               </p>
-              <p className="font-display-tight mt-3 text-[30px] sm:text-[34px]">{story.headline}</p>
-              <p className="mt-4 text-[17px] font-medium text-ink/75">&ldquo;{story.quote}&rdquo;</p>
+              <p className="mt-3 font-display-tight text-[30px] sm:text-[34px]">{story.headline}</p>
+              <p className="mt-4 text-[17px] font-medium text-ink/75">
+                &ldquo;{story.quote}&rdquo;
+              </p>
             </motion.div>
           </AnimatePresence>
 

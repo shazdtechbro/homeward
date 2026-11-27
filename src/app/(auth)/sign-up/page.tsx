@@ -8,7 +8,11 @@ import { AppProviders } from "@/ui/app-providers";
 
 export const metadata: Metadata = { title: "Join Homeward" };
 
-export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+export default async function SignUpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
   const { next } = await searchParams;
   if (await currentUser()) redirect(safeNext(next));
 

@@ -47,10 +47,22 @@ const COLOURS: Array<[string, string]> = [
   ["pink", "pink"],
 ];
 
-const BRANDS = ["HP", "Dell", "Lenovo", "Apple", "Samsung", "Tecno", "Infinix", "Casio", "Oraimo", "Anker"];
+const BRANDS = [
+  "HP",
+  "Dell",
+  "Lenovo",
+  "Apple",
+  "Samsung",
+  "Tecno",
+  "Infinix",
+  "Casio",
+  "Oraimo",
+  "Anker",
+];
 const WHEN = ["last night", "this morning", "yesterday", "today", "tonight", "last week"];
 
-const escape = (phrase: string) => phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+const escape = (phrase: string) =>
+  phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
 
 /** First phrase present as whole words, with the words exactly as the person wrote them. */
 function find<T>(text: string, phrases: Array<[string, T]>): Extracted<T> | undefined {
@@ -72,11 +84,17 @@ export class KeywordReportParser implements ReportParser {
       text,
       category: find(text, CATEGORY_WORDS),
       colour: find(text, COLOURS),
-      brand: find(text, BRANDS.map((brand) => [brand, brand])),
+      brand: find(
+        text,
+        BRANDS.map((brand) => [brand, brand]),
+      ),
       place: find(text, PLACE_ALIASES),
       when: daysAgo
         ? { value: daysAgo[0].toLowerCase(), evidence: daysAgo[0] }
-        : find(text, WHEN.map((when) => [when, when])),
+        : find(
+            text,
+            WHEN.map((when) => [when, when]),
+          ),
     };
   }
 }

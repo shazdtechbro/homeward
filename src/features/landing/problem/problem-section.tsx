@@ -11,10 +11,22 @@ import { SectionHeading } from "@/ui/section-heading";
 const thousands = (value: number) => Math.round(value).toLocaleString("en-NG");
 
 const STATS = [
-  { to: 50000, format: (v: number) => `${thousands(v)}+`, label: "students across faculties and colleges" },
-  { to: 50, format: (v: number) => `>${Math.round(v)}%`, label: "live off campus and commute in daily" },
+  {
+    to: 50000,
+    format: (v: number) => `${thousands(v)}+`,
+    label: "students across faculties and colleges",
+  },
+  {
+    to: 50,
+    format: (v: number) => `>${Math.round(v)}%`,
+    label: "live off campus and commute in daily",
+  },
   { to: 15000, format: thousands, label: "hectares of campus to lose things on" },
-  { to: 9, format: (v: number) => `${Math.round(v)} in 10`, label: "students don’t know where lost-and-found is" },
+  {
+    to: 9,
+    format: (v: number) => `${Math.round(v)} in 10`,
+    label: "students don’t know where lost-and-found is",
+  },
 ];
 
 export function ProblemSection() {
@@ -26,7 +38,11 @@ export function ProblemSection() {
   return (
     <section id="about" aria-labelledby="problem-title" className="scroll-mt-20">
       <div ref={ref} className="relative overflow-hidden bg-green py-28 sm:py-40">
-        <motion.div aria-hidden className="absolute inset-[-14%_0]" style={reduce ? undefined : { y }}>
+        <motion.div
+          aria-hidden
+          className="absolute inset-[-14%_0]"
+          style={reduce ? undefined : { y }}
+        >
           <Picture
             name="04-exam-night"
             alt=""
@@ -58,9 +74,12 @@ export function ProblemSection() {
                     format={stat.format}
                     whenInView
                     duration={1.8}
-                    className="font-display-tight block text-[44px] text-sun sm:text-[64px]"
+                    className="block font-display-tight text-[44px] text-sun sm:text-[64px]"
                   />
-                  <p aria-hidden className="mt-3 max-w-[14rem] text-[15px] font-medium text-paper/80">
+                  <p
+                    aria-hidden
+                    className="mt-3 max-w-[14rem] text-[15px] font-medium text-paper/80"
+                  >
                     {stat.label}
                   </p>
                 </dd>

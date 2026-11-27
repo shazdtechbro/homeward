@@ -10,7 +10,11 @@ type FieldProps = {
   error?: string;
   optional?: boolean;
   className?: string;
-  children: (props: { id: string; "aria-invalid": boolean; "aria-describedby"?: string }) => React.ReactNode;
+  children: (props: {
+    id: string;
+    "aria-invalid": boolean;
+    "aria-describedby"?: string;
+  }) => React.ReactNode;
 };
 
 /** Label, control, hint and error wired together for screen readers. */
@@ -19,7 +23,10 @@ export function Field({ label, hint, error, optional, className, children }: Fie
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
   return (
     <div className={cn("space-y-2", className)}>
-      <label htmlFor={id} className="flex items-baseline justify-between text-[14px] font-semibold text-ink">
+      <label
+        htmlFor={id}
+        className="flex items-baseline justify-between text-[14px] font-semibold text-ink"
+      >
         {label}
         {optional && <span className="text-[12px] font-medium text-ink-2">Optional</span>}
       </label>
@@ -42,7 +49,10 @@ export function Field({ label, hint, error, optional, className, children }: Fie
 export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p role="alert" className="rounded-[14px] bg-error/10 px-4 py-3 text-[14px] font-medium text-error">
+    <p
+      role="alert"
+      className="rounded-[14px] bg-error/10 px-4 py-3 text-[14px] font-medium text-error"
+    >
       {message}
     </p>
   );

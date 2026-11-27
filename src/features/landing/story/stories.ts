@@ -19,7 +19,8 @@ export const STORIES: Story[] = [
     name: "Aisha",
     detail: "200L Law",
     headline: "ID card back in 1 hour, two days before exams.",
-    quote: "I got an email saying my card was at the library Spot before I'd even finished panicking.",
+    quote:
+      "I got an email saying my card was at the library Spot before I'd even finished panicking.",
     elapsed: "1h 04m",
   },
   {

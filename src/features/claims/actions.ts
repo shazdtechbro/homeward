@@ -40,26 +40,34 @@ export async function claimItem(_: ClaimState, form: FormData): Promise<ClaimSta
   if (!user) return { status: "error", message: "Sign in to claim this item." };
 
   const parsed = claimSchema.safeParse(Object.fromEntries(form));
-  if (!parsed.success) return { status: "error", message: parsed.error.issues[0]?.message ?? "Invalid answer." };
+  if (!parsed.success)
+    return { status: "error", message: parsed.error.issues[0]?.message ?? "Invalid answer." };
   const { itemId, answer } = parsed.data;
   const { items, claims, users } = getServices();
 
   try {
     checkRate(user.id);
     const listing = await items.get(itemId);
-    if (!listing || listing.status === "claimed") throw new AppError("not_found", "This item is no longer available.");
-    if (listing.finder.userId === user.id) throw new AppError("invalid_input", "You found this one, so you can’t claim it.");
+    if (!listing || listing.status === "claimed")
+      throw new AppError("not_found", "This item is no longer available.");
+    if (listing.finder.userId === user.id)
+      throw new AppError("invalid_input", "You found this one, so you can’t claim it.");
 
     const mine = (await claims.forItem(itemId)).filter((c) => c.claimantId === user.id);
     if (mine.some((c) => c.status === "verified")) return { status: "verified" };
     const failures = mine.filter((c) => c.status === "rejected").length;
     if (failures >= MAX_CLAIM_ATTEMPTS) {
-      return { status: "error", message: "You’ve used all your attempts for this item.", attemptsLeft: 0 };
+      return {
+        status: "error",
+        message: "You’ve used all your attempts for this item.",
+        attemptsLeft: 0,
+      };
     }
 
     // An ID card is proved by the matric number on the account, not by a question.
     const ownsCard = Boolean(listing.matric && user.matric && listing.matric === user.matric);
-    const verified = ownsCard || (await answerIsRight(listing.check.question, listing.check.answer, answer));
+    const verified =
+      ownsCard || (await answerIsRight(listing.check.question, listing.check.answer, answer));
     await claims.create({
       id: crypto.randomUUID(),
       itemId,
@@ -78,7 +86,10 @@ export async function claimItem(_: ClaimState, form: FormData): Promise<ClaimSta
       const attemptsLeft = MAX_CLAIM_ATTEMPTS - failures - 1;
       return {
         status: "error",
-        message: attemptsLeft > 0 ? "That doesn’t match what the finder wrote." : "That doesn’t match, and that was your last attempt.",
+        message:
+          attemptsLeft > 0
+            ? "That doesn’t match what the finder wrote."
+            : "That doesn’t match, and that was your last attempt.",
         attemptsLeft,
       };
     }
@@ -97,11 +108,15 @@ export async function claimItem(_: ClaimState, form: FormData): Promise<ClaimSta
     return { status: "verified" };
   } catch (error) {
     if (!(error instanceof AppError)) logger.error("claim.failed", { message: String(error) });
-    return { status: "error", message: error instanceof AppError ? error.message : "Something went wrong. Try again." };
+    return {
+      status: "error",
+      message: error instanceof AppError ? error.message : "Something went wrong. Try again.",
+    };
   }
 }
 
-export type HandoverState = { status: "idle" } | { status: "error"; message: string } | { status: "done"; owner: string };
+export type HandoverState =
+  { status: "idle" } | { status: "error"; message: string } | { status: "done"; owner: string };
 
 const handoverSchema = z.object({
   itemId: z.string().min(3).max(40),
@@ -120,7 +135,8 @@ const checkHandoverRate = createRateLimiter({ limit: 8, windowMs: 60_000 });
  */
 export async function confirmHandover(_: HandoverState, form: FormData): Promise<HandoverState> {
   const parsed = handoverSchema.safeParse(Object.fromEntries(form));
-  if (!parsed.success) return { status: "error", message: parsed.error.issues[0]?.message ?? "Check the code." };
+  if (!parsed.success)
+    return { status: "error", message: parsed.error.issues[0]?.message ?? "Check the code." };
   const { itemId, code, key } = parsed.data;
   const user = await currentUser();
   const { items, users, claims } = getServices();
@@ -129,14 +145,22 @@ export async function confirmHandover(_: HandoverState, form: FormData): Promise
     checkHandoverRate(`${itemId}:${user?.id ?? key ?? "anon"}`);
     const listing = await items.get(itemId);
     if (!listing) throw new AppError("not_found", "Item not found.");
-    const isFinder = (user && listing.finder.userId === user.id) || (key && listing.manageToken && key === listing.manageToken);
+    const isFinder =
+      (user && listing.finder.userId === user.id) ||
+      (key && listing.manageToken && key === listing.manageToken);
     if (!isFinder) throw new AppError("unauthorized", "Only the finder can confirm the handover.");
-    if (listing.status === "claimed") return { status: "done", owner: listing.returnedTo ?? "its owner" };
+    if (listing.status === "claimed")
+      return { status: "done", owner: listing.returnedTo ?? "its owner" };
 
-    const claim = (await claims.forItem(itemId)).find((c) => c.status === "verified" && c.pickupCode === code);
+    const claim = (await claims.forItem(itemId)).find(
+      (c) => c.status === "verified" && c.pickupCode === code,
+    );
     if (!claim) {
       logger.warn("handover.wrong_code", { itemId });
-      return { status: "error", message: "That code doesn’t match. Don’t hand it over until it does." };
+      return {
+        status: "error",
+        message: "That code doesn’t match. Don’t hand it over until it does.",
+      };
     }
 
     await items.markReturned(itemId, claim.claimantName);
@@ -155,6 +179,9 @@ export async function confirmHandover(_: HandoverState, form: FormData): Promise
     return { status: "done", owner: claim.claimantName };
   } catch (error) {
     if (!(error instanceof AppError)) logger.error("handover.failed", { message: String(error) });
-    return { status: "error", message: error instanceof AppError ? error.message : "Something went wrong. Try again." };
+    return {
+      status: "error",
+      message: error instanceof AppError ? error.message : "Something went wrong. Try again.",
+    };
   }
 }

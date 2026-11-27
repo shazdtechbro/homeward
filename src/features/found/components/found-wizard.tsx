@@ -108,13 +108,15 @@ export function FoundWizard({ finder }: { finder: Finder }) {
   });
   const fileRef = useRef<HTMLInputElement>(null);
   const errors = state.fieldErrors ?? {};
-  const set = <K extends keyof Draft>(key: K, value: Draft[K]) => setDraft((d) => ({ ...d, [key]: value }));
+  const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
+    setDraft((d) => ({ ...d, [key]: value }));
 
   // Server-side validation errors send you back to the step that has them.
   useEffect(() => {
     const keys = Object.keys(state.fieldErrors ?? {});
     if (keys.length === 0) return;
-    const stepOf = (k: string) => (["question", "answer"].includes(k) ? 2 : k.startsWith("contact") ? 3 : 1);
+    const stepOf = (k: string) =>
+      ["question", "answer"].includes(k) ? 2 : k.startsWith("contact") ? 3 : 1;
     setStep(Math.min(...keys.map(stepOf)));
   }, [state.fieldErrors]);
 
@@ -139,7 +141,11 @@ export function FoundWizard({ finder }: { finder: Finder }) {
         category,
         colour,
         labels: cloud.labels.length ? cloud.labels : device.labels,
-        title: cloud.title ?? (category ? `${colour ? `${colour[0]!.toUpperCase()}${colour.slice(1)} ` : ""}${CATEGORY_LABELS[category].toLowerCase()}` : undefined),
+        title:
+          cloud.title ??
+          (category
+            ? `${colour ? `${colour[0]!.toUpperCase()}${colour.slice(1)} ` : ""}${CATEGORY_LABELS[category].toLowerCase()}`
+            : undefined),
       };
       setAiSource(fromNova ? "nova" : "device");
       setAi(result);
@@ -153,7 +159,8 @@ export function FoundWizard({ finder }: { finder: Finder }) {
         question: d.question || result.question || "",
         matric: d.matric || result.matric || "",
       }));
-      if (result.unsafe) setLocalError("That photo can’t be posted. Take a clear photo of just the item.");
+      if (result.unsafe)
+        setLocalError("That photo can’t be posted. Take a clear photo of just the item.");
     } catch {
       setLocalError("We couldn’t read that photo. Try another one.");
     } finally {
@@ -163,9 +170,19 @@ export function FoundWizard({ finder }: { finder: Finder }) {
 
   function canContinue() {
     if (step === 0) return Boolean(photo) && !analysing && !ai?.unsafe;
-    if (step === 1) return draft.title.trim().length >= 3 && draft.category && draft.colour && draft.place && (draft.place !== "other" || draft.placeOther.trim());
+    if (step === 1)
+      return (
+        draft.title.trim().length >= 3 &&
+        draft.category &&
+        draft.colour &&
+        draft.place &&
+        (draft.place !== "other" || draft.placeOther.trim())
+      );
     if (step === 2) return draft.question.trim().length >= 8 && draft.answer.trim().length >= 2;
-    return draft.contactName.trim().length >= 2 && (draft.contactPhone.trim() || draft.contactEmail.trim());
+    return (
+      draft.contactName.trim().length >= 2 &&
+      (draft.contactPhone.trim() || draft.contactEmail.trim())
+    );
   }
 
   function post() {
@@ -179,17 +196,34 @@ export function FoundWizard({ finder }: { finder: Finder }) {
   const suggestions = [
     ...(ai?.question ? [ai.question] : []),
     ...(SUGGESTED_QUESTIONS[draft.category || "default"] ?? SUGGESTED_QUESTIONS.default!),
-  ].filter((q, i, all) => all.indexOf(q) === i).slice(0, 4);
+  ]
+    .filter((q, i, all) => all.indexOf(q) === i)
+    .slice(0, 4);
 
   return (
     <div className="mx-auto w-full max-w-[640px]">
-      <div className="flex items-center gap-2" aria-label={`Step ${step + 1} of ${STEPS.length}: ${STEPS[step]}`}>
+      <div
+        className="flex items-center gap-2"
+        aria-label={`Step ${step + 1} of ${STEPS.length}: ${STEPS[step]}`}
+      >
         {STEPS.map((label, i) => (
           <div key={label} className="flex-1">
             <div className="h-1.5 overflow-hidden rounded-full bg-ink/10">
-              <motion.div className="h-full bg-coral" initial={false} animate={{ width: i <= step ? "100%" : "0%" }} transition={{ duration: 0.4 }} />
+              <motion.div
+                className="h-full bg-coral"
+                initial={false}
+                animate={{ width: i <= step ? "100%" : "0%" }}
+                transition={{ duration: 0.4 }}
+              />
             </div>
-            <span className={cn("mt-2 block text-[12px] font-semibold", i === step ? "text-ink" : "text-ink-2")}>{label}</span>
+            <span
+              className={cn(
+                "mt-2 block text-[12px] font-semibold",
+                i === step ? "text-ink" : "text-ink-2",
+              )}
+            >
+              {label}
+            </span>
           </div>
         ))}
       </div>
@@ -208,7 +242,9 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               <h1 className="font-display-tight text-[40px] sm:text-[52px]">
                 Snap what you <em className="font-normal italic">found</em>.
               </h1>
-              <p className="mt-3 text-ink-2">One clear photo. Homeward’s AI reads it and drafts the listing for you.</p>
+              <p className="mt-3 text-ink-2">
+                One clear photo. Homeward’s AI reads it and drafts the listing for you.
+              </p>
 
               <input
                 ref={fileRef}
@@ -230,45 +266,73 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                 {photo ? (
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element -- local blob preview */}
-                    <img src={photo.url} alt="Your photo of the found item" className="absolute inset-0 size-full object-cover" />
+                    <img
+                      src={photo.url}
+                      alt="Your photo of the found item"
+                      className="absolute inset-0 size-full object-cover"
+                    />
                     {analysing && (
                       <span className="absolute inset-0 overflow-hidden bg-ink/30">
-                        <span className="animate-scan absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-transparent via-sky/80 to-transparent" />
+                        <span className="absolute inset-x-0 top-0 h-24 animate-scan bg-gradient-to-b from-transparent via-sky/80 to-transparent" />
                       </span>
                     )}
-                    <span className="glass absolute bottom-4 left-4 rounded-full px-4 py-2 text-[13px] font-semibold">
+                    <span className="absolute bottom-4 left-4 rounded-full px-4 py-2 text-[13px] font-semibold glass">
                       {analysing ? "Reading your photo…" : "Tap to retake"}
                     </span>
                   </>
                 ) : (
                   <>
-                    <span className="grid size-20 place-items-center rounded-full bg-coral text-ink shadow-coral transition-transform group-hover:scale-105"><Camera aria-hidden className="size-8" /></span>
+                    <span className="grid size-20 place-items-center rounded-full bg-coral text-ink shadow-coral transition-transform group-hover:scale-105">
+                      <Camera aria-hidden className="size-8" />
+                    </span>
                     <span className="mt-5 text-[18px] font-semibold">Take a photo</span>
-                    <span className="mt-1 text-[14px] text-ink-2">or choose one from your gallery</span>
+                    <span className="mt-1 text-[14px] text-ink-2">
+                      or choose one from your gallery
+                    </span>
                   </>
                 )}
               </button>
 
               {ai && !analysing && (ai.labels.length > 0 || ai.title || ai.colour) && (
                 <div className="mt-5 rounded-[20px] bg-sky/35 p-4" aria-live="polite">
-                  <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase"><Sparkles aria-hidden className="mr-1.5 inline size-3.5 align-[-2px]" />{aiSource === "nova" ? "What the AI saw" : "What we read from your photo"}
-                    <span className="ml-2 rounded-full bg-white/80 px-2 py-0.5 text-[10px] tracking-normal text-ink-2 normal-case">{aiSource === "nova" ? "Amazon Nova on Bedrock" : "Read on your device"}</span>
+                  <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase">
+                    <Sparkles aria-hidden className="mr-1.5 inline size-3.5 align-[-2px]" />
+                    {aiSource === "nova" ? "What the AI saw" : "What we read from your photo"}
+                    <span className="ml-2 rounded-full bg-white/80 px-2 py-0.5 text-[10px] tracking-normal text-ink-2 normal-case">
+                      {aiSource === "nova" ? "Amazon Nova on Bedrock" : "Read on your device"}
+                    </span>
                   </p>
                   <div className="mt-2.5 flex flex-wrap gap-2">
-                    {ai.title && <span className="rounded-full bg-ink px-3 py-1.5 text-[13px] font-semibold text-paper">{ai.title}</span>}
+                    {ai.title && (
+                      <span className="rounded-full bg-ink px-3 py-1.5 text-[13px] font-semibold text-paper">
+                        {ai.title}
+                      </span>
+                    )}
                     {ai.colour && (
                       <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-medium capitalize">
-                        <span aria-hidden className="size-3 rounded-full ring-1 ring-ink/15" style={{ background: COLOUR_OPTIONS.find(([n]) => n === ai.colour)?.[1] }} />
+                        <span
+                          aria-hidden
+                          className="size-3 rounded-full ring-1 ring-ink/15"
+                          style={{ background: COLOUR_OPTIONS.find(([n]) => n === ai.colour)?.[1] }}
+                        />
                         {ai.colour}
                       </span>
                     )}
                     {ai.labels.slice(0, 6).map((label) => (
-                      <span key={label} className="rounded-full bg-white px-3 py-1.5 text-[13px] font-medium">
+                      <span
+                        key={label}
+                        className="rounded-full bg-white px-3 py-1.5 text-[13px] font-medium"
+                      >
                         {label}
                       </span>
                     ))}
                   </div>
-                  {ai.matric && <p className="mt-3 text-[13px] text-ink-2"><IdCard aria-hidden className="mr-1 inline size-4 align-[-3px]" />Read a matric number off the card. We’ll use it to tell the owner privately.</p>}
+                  {ai.matric && (
+                    <p className="mt-3 text-[13px] text-ink-2">
+                      <IdCard aria-hidden className="mr-1 inline size-4 align-[-3px]" />
+                      Read a matric number off the card. We’ll use it to tell the owner privately.
+                    </p>
+                  )}
                 </div>
               )}
             </>
@@ -276,11 +340,27 @@ export function FoundWizard({ finder }: { finder: Finder }) {
 
           {step === 1 && (
             <div className="space-y-6">
-              <h1 className="font-display-tight text-[36px] sm:text-[46px]">What is it, and where was it?</h1>
-              {ai?.title && <p className="-mt-3 text-[14px] text-ink-2"><Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />We filled in what we could from your photo. Check it.</p>}
+              <h1 className="font-display-tight text-[36px] sm:text-[46px]">
+                What is it, and where was it?
+              </h1>
+              {ai?.title && (
+                <p className="-mt-3 text-[14px] text-ink-2">
+                  <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
+                  We filled in what we could from your photo. Check it.
+                </p>
+              )}
 
               <Field label="Name it" error={errors.title}>
-                {(a11y) => <input {...a11y} value={draft.title} onChange={(e) => set("title", e.target.value)} placeholder="Black HP laptop" className={inputClass} maxLength={60} />}
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.title}
+                    onChange={(e) => set("title", e.target.value)}
+                    placeholder="Black HP laptop"
+                    className={inputClass}
+                    maxLength={60}
+                  />
+                )}
               </Field>
 
               <fieldset>
@@ -294,7 +374,9 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       onClick={() => set("category", c)}
                       className={cn(
                         "flex flex-col items-center gap-1 rounded-[14px] border px-1 py-2.5 text-[11px] font-semibold transition",
-                        draft.category === c ? "border-ink bg-ink text-paper" : "border-ink/10 bg-white hover:border-ink/30",
+                        draft.category === c
+                          ? "border-ink bg-ink text-paper"
+                          : "border-ink/10 bg-white hover:border-ink/30",
                       )}
                     >
                       <CategoryIcon category={c} />
@@ -302,7 +384,9 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                     </button>
                   ))}
                 </div>
-                {errors.category && <p className="mt-2 text-[13px] text-error">{errors.category}</p>}
+                {errors.category && (
+                  <p className="mt-2 text-[13px] text-error">{errors.category}</p>
+                )}
               </fieldset>
 
               <fieldset>
@@ -318,7 +402,8 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       onClick={() => set("colour", name)}
                       className={cn(
                         "size-10 rounded-full ring-1 ring-ink/15 transition",
-                        draft.colour === name && "ring-[3px] ring-coral ring-offset-2 ring-offset-paper",
+                        draft.colour === name &&
+                          "ring-[3px] ring-coral ring-offset-2 ring-offset-paper",
                       )}
                       style={{ background: hex }}
                     />
@@ -327,12 +412,40 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               </fieldset>
 
               <Field label="Brand" optional>
-                {(a11y) => <input {...a11y} value={draft.brand} onChange={(e) => set("brand", e.target.value)} placeholder="HP, Tecno, Casio…" className={inputClass} maxLength={30} />}
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.brand}
+                    onChange={(e) => set("brand", e.target.value)}
+                    placeholder="HP, Tecno, Casio…"
+                    className={inputClass}
+                    maxLength={30}
+                  />
+                )}
               </Field>
 
               {draft.category === "id-card" && (
-                <Field label="Matric number on the card" optional error={errors.matric} hint={<><Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />ID cards are never listed publicly. If the owner is on Homeward, only they get told.</>}>
-                  {(a11y) => <input {...a11y} value={draft.matric} onChange={(e) => set("matric", e.target.value)} placeholder="19/52HA041" className={cn(inputClass, "font-mono uppercase")} />}
+                <Field
+                  label="Matric number on the card"
+                  optional
+                  error={errors.matric}
+                  hint={
+                    <>
+                      <Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
+                      ID cards are never listed publicly. If the owner is on Homeward, only they get
+                      told.
+                    </>
+                  }
+                >
+                  {(a11y) => (
+                    <input
+                      {...a11y}
+                      value={draft.matric}
+                      onChange={(e) => set("matric", e.target.value)}
+                      placeholder="19/52HA041"
+                      className={cn(inputClass, "font-mono uppercase")}
+                    />
+                  )}
                 </Field>
               )}
 
@@ -347,7 +460,9 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       onClick={() => set("place", key)}
                       className={cn(
                         "rounded-full border px-3.5 py-2 text-[13px] font-semibold transition",
-                        draft.place === key ? "border-ink bg-ink text-paper" : "border-ink/10 bg-white hover:border-ink/30",
+                        draft.place === key
+                          ? "border-ink bg-ink text-paper"
+                          : "border-ink/10 bg-white hover:border-ink/30",
                       )}
                     >
                       {key === "other" ? "Somewhere else" : PLACES[key].name}
@@ -355,9 +470,18 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                   ))}
                 </div>
                 {draft.place === "other" && (
-                  <input value={draft.placeOther} onChange={(e) => set("placeOther", e.target.value)} placeholder="e.g. Faculty of Agric car park" className={cn(inputClass, "mt-3")} aria-label="Where you found it" maxLength={60} />
+                  <input
+                    value={draft.placeOther}
+                    onChange={(e) => set("placeOther", e.target.value)}
+                    placeholder="e.g. Faculty of Agric car park"
+                    className={cn(inputClass, "mt-3")}
+                    aria-label="Where you found it"
+                    maxLength={60}
+                  />
                 )}
-                {(errors.place || errors.placeOther) && <p className="mt-2 text-[13px] text-error">{errors.place ?? errors.placeOther}</p>}
+                {(errors.place || errors.placeOther) && (
+                  <p className="mt-2 text-[13px] text-error">{errors.place ?? errors.placeOther}</p>
+                )}
               </fieldset>
 
               <fieldset>
@@ -371,7 +495,9 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       onClick={() => set("when", key as Draft["when"])}
                       className={cn(
                         "rounded-[14px] border px-3 py-2.5 text-[13px] font-semibold transition",
-                        draft.when === key ? "border-ink bg-ink text-paper" : "border-ink/10 bg-white hover:border-ink/30",
+                        draft.when === key
+                          ? "border-ink bg-ink text-paper"
+                          : "border-ink/10 bg-white hover:border-ink/30",
                       )}
                     >
                       {option.label}
@@ -380,8 +506,22 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                 </div>
               </fieldset>
 
-              <Field label="Anything else?" optional hint="Don’t include names or numbers you can read on the item.">
-                {(a11y) => <textarea {...a11y} value={draft.description} onChange={(e) => set("description", e.target.value)} rows={3} maxLength={280} className={inputClass} placeholder="Left on a reading desk upstairs, charger was with it." />}
+              <Field
+                label="Anything else?"
+                optional
+                hint="Don’t include names or numbers you can read on the item."
+              >
+                {(a11y) => (
+                  <textarea
+                    {...a11y}
+                    value={draft.description}
+                    onChange={(e) => set("description", e.target.value)}
+                    rows={3}
+                    maxLength={280}
+                    className={inputClass}
+                    placeholder="Left on a reading desk upstairs, charger was with it."
+                  />
+                )}
               </Field>
             </div>
           )}
@@ -391,7 +531,10 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               <h1 className="font-display-tight text-[36px] sm:text-[46px]">
                 Ask something only the <em className="font-normal italic">owner</em> knows.
               </h1>
-              <p className="-mt-2 text-ink-2">Anyone claiming it must answer before they see how to reach you. Pick a detail that isn’t in your photo.</p>
+              <p className="-mt-2 text-ink-2">
+                Anyone claiming it must answer before they see how to reach you. Pick a detail that
+                isn’t in your photo.
+              </p>
 
               <div className="flex flex-wrap gap-2">
                 {suggestions.map((q, i) => (
@@ -401,40 +544,87 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                     onClick={() => set("question", q)}
                     className={cn(
                       "rounded-full border px-3.5 py-2 text-left text-[13px] font-medium transition",
-                      draft.question === q ? "border-ink bg-ink text-paper" : "border-ink/10 bg-white hover:border-ink/30",
+                      draft.question === q
+                        ? "border-ink bg-ink text-paper"
+                        : "border-ink/10 bg-white hover:border-ink/30",
                     )}
                   >
-                    {i === 0 && ai?.question === q && <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px] text-coral" />}
+                    {i === 0 && ai?.question === q && (
+                      <Sparkles
+                        aria-hidden
+                        className="mr-1 inline size-3.5 align-[-2px] text-coral"
+                      />
+                    )}
                     {q}
                   </button>
                 ))}
               </div>
 
               <Field label="Your question" error={errors.question}>
-                {(a11y) => <input {...a11y} value={draft.question} onChange={(e) => set("question", e.target.value)} placeholder="What sticker is on the lid?" className={inputClass} maxLength={120} />}
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.question}
+                    onChange={(e) => set("question", e.target.value)}
+                    placeholder="What sticker is on the lid?"
+                    className={inputClass}
+                    maxLength={120}
+                  />
+                )}
               </Field>
-              <Field label="The answer" error={errors.answer} hint={<><Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />Never shown to anyone. Our AI checks claims against it, allowing for different wording.</>}>
-                {(a11y) => <input {...a11y} value={draft.answer} onChange={(e) => set("answer", e.target.value)} placeholder="Green Super Eagles sticker" className={inputClass} maxLength={80} />}
+              <Field
+                label="The answer"
+                error={errors.answer}
+                hint={
+                  <>
+                    <Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
+                    Never shown to anyone. Our AI checks claims against it, allowing for different
+                    wording.
+                  </>
+                }
+              >
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.answer}
+                    onChange={(e) => set("answer", e.target.value)}
+                    placeholder="Green Super Eagles sticker"
+                    className={inputClass}
+                    maxLength={80}
+                  />
+                )}
               </Field>
             </div>
           )}
 
           {step === 3 && (
             <div className="space-y-6">
-              <h1 className="font-display-tight text-[36px] sm:text-[46px]">How should the owner reach you?</h1>
+              <h1 className="font-display-tight text-[36px] sm:text-[46px]">
+                How should the owner reach you?
+              </h1>
               <div className="rounded-[20px] bg-green p-5 text-paper">
-                <p className="flex items-center gap-2 font-semibold"><Lock aria-hidden className="size-4" /> Shown only after someone proves it’s theirs.</p>
-                <p className="mt-1 text-[14px] text-paper/80">Meet somewhere public on campus to hand it over: a faculty entrance, the library foyer, the SUB.</p>
+                <p className="flex items-center gap-2 font-semibold">
+                  <Lock aria-hidden className="size-4" /> Shown only after someone proves it’s
+                  theirs.
+                </p>
+                <p className="mt-1 text-[14px] text-paper/80">
+                  Meet somewhere public on campus to hand it over: a faculty entrance, the library
+                  foyer, the SUB.
+                </p>
               </div>
 
               {finder ? (
                 <p className="text-[15px] text-ink-2">
-                  Posting as <b className="text-ink">{finder.name}</b>. You’ll earn <b className="text-ink">+50 karma</b> when it gets home.
+                  Posting as <b className="text-ink">{finder.name}</b>. You’ll earn{" "}
+                  <b className="text-ink">+50 karma</b> when it gets home.
                 </p>
               ) : (
                 <p className="text-[15px] text-ink-2">
                   Posting as a guest.{" "}
-                  <Link href="/sign-in?next=/found/new" className="font-semibold text-ink underline decoration-sun decoration-[3px] underline-offset-4">
+                  <Link
+                    href="/sign-in?next=/found/new"
+                    className="font-semibold text-ink underline decoration-sun decoration-[3px] underline-offset-4"
+                  >
                     Sign in
                   </Link>{" "}
                   to track it and earn karma.
@@ -442,13 +632,43 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               )}
 
               <Field label="Your name" error={errors.contactName}>
-                {(a11y) => <input {...a11y} value={draft.contactName} onChange={(e) => set("contactName", e.target.value)} autoComplete="name" placeholder="Emeka" className={inputClass} />}
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.contactName}
+                    onChange={(e) => set("contactName", e.target.value)}
+                    autoComplete="name"
+                    placeholder="Emeka"
+                    className={inputClass}
+                  />
+                )}
               </Field>
               <Field label="Phone or WhatsApp" error={errors.contactPhone}>
-                {(a11y) => <input {...a11y} value={draft.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} type="tel" inputMode="tel" autoComplete="tel" placeholder="0803 123 4567" className={inputClass} />}
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.contactPhone}
+                    onChange={(e) => set("contactPhone", e.target.value)}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="0803 123 4567"
+                    className={inputClass}
+                  />
+                )}
               </Field>
               <Field label="Email" optional error={errors.contactEmail}>
-                {(a11y) => <input {...a11y} value={draft.contactEmail} onChange={(e) => set("contactEmail", e.target.value)} type="email" autoComplete="email" placeholder="you@students.unilorin.edu.ng" className={inputClass} />}
+                {(a11y) => (
+                  <input
+                    {...a11y}
+                    value={draft.contactEmail}
+                    onChange={(e) => set("contactEmail", e.target.value)}
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@students.unilorin.edu.ng"
+                    className={inputClass}
+                  />
+                )}
               </Field>
             </div>
           )}
@@ -466,11 +686,24 @@ export function FoundWizard({ finder }: { finder: Finder }) {
           </Button>
         )}
         {step < STEPS.length - 1 ? (
-          <Button type="button" size="lg" className="flex-1" disabled={!canContinue()} onClick={() => setStep((s) => s + 1)}>
+          <Button
+            type="button"
+            size="lg"
+            className="flex-1"
+            disabled={!canContinue()}
+            onClick={() => setStep((s) => s + 1)}
+          >
             {analysing ? "Reading photo…" : "Continue"} <Arrow />
           </Button>
         ) : (
-          <Button type="button" size="lg" variant="coral" className="flex-1" disabled={!canContinue() || pending} onClick={post}>
+          <Button
+            type="button"
+            size="lg"
+            variant="coral"
+            className="flex-1"
+            disabled={!canContinue() || pending}
+            onClick={post}
+          >
             {pending ? "Posting…" : "Post found item"} {!pending && <Arrow />}
           </Button>
         )}

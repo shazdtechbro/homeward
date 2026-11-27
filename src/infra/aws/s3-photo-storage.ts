@@ -1,5 +1,10 @@
 import "server-only";
-import { GetObjectCommand, PutObjectCommand, S3Client, type S3ClientConfig } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+  type S3ClientConfig,
+} from "@aws-sdk/client-s3";
 import type { PhotoStorage } from "@/core/ports";
 
 /** A private bucket: photos are only ever served through /api/photos, never by public URL. */
@@ -15,7 +20,12 @@ export class S3PhotoStorage implements PhotoStorage {
 
   async put(key: string, bytes: Uint8Array, contentType: string) {
     await this.s3.send(
-      new PutObjectCommand({ Bucket: this.bucket, Key: key, Body: bytes, ContentType: contentType }),
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: bytes,
+        ContentType: contentType,
+      }),
     );
   }
 

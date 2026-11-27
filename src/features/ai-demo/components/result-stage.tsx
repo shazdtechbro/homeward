@@ -13,7 +13,11 @@ const cardMotion = (i: number) => ({
   transition: { type: "spring" as const, stiffness: 260, damping: 24, delay: i * 0.12 },
 });
 
-type ResultStageProps = { outcome: SearchResponse["outcome"]; verified: boolean; pickupCode: string };
+type ResultStageProps = {
+  outcome: SearchResponse["outcome"];
+  verified: boolean;
+  pickupCode: string;
+};
 
 export function ResultStage({ outcome, verified, pickupCode }: ResultStageProps) {
   if (outcome.kind === "private") return <PrivateMatch verified={verified} />;
@@ -28,7 +32,10 @@ export function ResultStage({ outcome, verified, pickupCode }: ResultStageProps)
           </motion.li>
         ))}
       </ul>
-      <motion.div {...cardMotion(outcome.matches.length)} className="mt-4 flex h-14 items-center justify-center sm:mt-5">
+      <motion.div
+        {...cardMotion(outcome.matches.length)}
+        className="mt-4 flex h-14 items-center justify-center sm:mt-5"
+      >
         <AnimatePresence mode="wait">
           {verified ? (
             <VerifiedToast key="toast" kind="pickup" pickupCode={pickupCode} />
@@ -76,9 +83,7 @@ function MatchCard({ match, best }: { match: MatchView; best: boolean }) {
       <div className="min-w-0 flex-1 sm:mt-3 sm:px-1 sm:pb-1">
         <div className="flex items-baseline justify-between gap-2">
           <h3 className="truncate text-[15px] font-semibold">{match.title}</h3>
-          <span className="font-mono text-[14px] text-ink sm:hidden">
-            {match.score}%
-          </span>
+          <span className="font-mono text-[14px] text-ink sm:hidden">{match.score}%</span>
         </div>
         <p className="mt-0.5 font-mono text-[12px] text-ink-2">
           {match.place} · {match.when}
@@ -95,7 +100,10 @@ function MatchCard({ match, best }: { match: MatchView; best: boolean }) {
 
 function PrivateMatch({ verified }: { verified: boolean }) {
   return (
-    <motion.div {...cardMotion(0)} className="flex h-full flex-col items-center justify-center gap-5">
+    <motion.div
+      {...cardMotion(0)}
+      className="flex h-full flex-col items-center justify-center gap-5"
+    >
       <article className="flex w-full max-w-[560px] flex-col items-center gap-5 rounded-[22px] bg-white p-5 shadow-soft sm:flex-row">
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden rounded-[14px] sm:w-[220px]">
           <Picture
@@ -105,13 +113,16 @@ function PrivateMatch({ verified }: { verified: boolean }) {
             className="block size-full"
             imgClassName="size-full scale-110 object-cover blur-[10px]"
           />
-          <span className="glass absolute inset-0 m-auto flex h-9 w-fit items-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold">
-            <Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />Details hidden
+          <span className="absolute inset-0 m-auto flex h-9 w-fit items-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold glass">
+            <Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />
+            Details hidden
           </span>
         </div>
         <div>
-          <p className="text-[13px] font-semibold tracking-[0.08em] text-green uppercase">Matric Match</p>
-          <p className="font-display-tight mt-2 text-[28px]">We&rsquo;ve emailed you privately.</p>
+          <p className="text-[13px] font-semibold tracking-[0.08em] text-green uppercase">
+            Matric Match
+          </p>
+          <p className="mt-2 font-display-tight text-[28px]">We&rsquo;ve emailed you privately.</p>
           <p className="mt-2 text-[15px] text-ink-2">
             ID cards never appear in public results. Matched by matric no.{" "}
             <span className="font-mono text-ink">••/••/0421</span>
@@ -119,7 +130,9 @@ function PrivateMatch({ verified }: { verified: boolean }) {
         </div>
       </article>
       <div className="flex h-14 items-center">
-        <AnimatePresence>{verified && <VerifiedToast kind="private" pickupCode="" />}</AnimatePresence>
+        <AnimatePresence>
+          {verified && <VerifiedToast kind="private" pickupCode="" />}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
@@ -127,7 +140,10 @@ function PrivateMatch({ verified }: { verified: boolean }) {
 
 function NoMatch() {
   return (
-    <motion.div {...cardMotion(0)} className="flex h-full flex-col items-center justify-center text-center">
+    <motion.div
+      {...cardMotion(0)}
+      className="flex h-full flex-col items-center justify-center text-center"
+    >
       <p className="font-display-tight text-[32px]">Not found yet.</p>
       <p className="mt-2 max-w-sm text-[15px] text-ink-2">
         We&rsquo;ll watch every new find for 30 days and tell you the moment something matches.

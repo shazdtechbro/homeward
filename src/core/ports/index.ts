@@ -48,7 +48,7 @@ export interface MatchService {
 }
 
 /**
- * What the camera saw: Rekognition labels, text and safety checks, plus a
+ * What the camera saw: labels, text and a safety check, plus a
  * Nova-written draft of the listing. Every field is a suggestion the finder confirms.
  */
 export type ImageAnalysis = {
@@ -62,7 +62,7 @@ export type ImageAnalysis = {
   question?: string;
   /** A matric number read off an ID card, for private matching. */
   matric?: string;
-  /** Rekognition flagged the photo as unsafe; it must not be published. */
+  /** The photo was flagged as unsafe; it must not be published. */
   unsafe?: boolean;
 };
 
@@ -72,7 +72,7 @@ export interface ImageAnalyzer {
   isUnsafe(image: Uint8Array): Promise<boolean>;
 }
 
-/** Text → vector for meaning-based search. Titan Text Embeddings V2 in production. */
+/** Text → vector for meaning-based search (Titan Text Embeddings, where the region offers it). */
 export interface Embedder {
   embed(text: string): Promise<number[] | undefined>;
 }

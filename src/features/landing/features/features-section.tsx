@@ -56,7 +56,11 @@ const TILES: Tile[] = [
 
 export function FeaturesSection() {
   return (
-    <section id="for-campus" aria-labelledby="features-title" className="scroll-mt-20 px-4 py-28 sm:py-40">
+    <section
+      id="for-campus"
+      aria-labelledby="features-title"
+      className="scroll-mt-20 px-4 py-28 sm:py-40"
+    >
       <SectionHeading
         id="features-title"
         eyebrow="For campus"
@@ -74,8 +78,10 @@ export function FeaturesSection() {
               delay={i * 0.06}
               className={cn("flex flex-col rounded-lg bg-paper-2 p-6 sm:p-7", tile.className)}
             >
-              <div className="flex min-h-[220px] flex-1 items-center justify-center">{tile.visual}</div>
-              <h3 className="font-display-tight mt-6 text-[28px] sm:text-[32px]">{tile.title}</h3>
+              <div className="flex min-h-[220px] flex-1 items-center justify-center">
+                {tile.visual}
+              </div>
+              <h3 className="mt-6 font-display-tight text-[28px] sm:text-[32px]">{tile.title}</h3>
               <p className="mt-2 max-w-[28rem] text-[16px] font-medium text-ink-2">{tile.body}</p>
             </Reveal>
           ))}

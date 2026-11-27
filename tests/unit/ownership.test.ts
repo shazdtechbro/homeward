@@ -6,7 +6,9 @@ import { buildCatalogue } from "@/infra/mock/catalogue";
 
 describe("answerMatches", () => {
   it("accepts the same substance in different words", () => {
-    expect(answerMatches("green super eagles sticker", "A green Super Eagles one, peeling")).toBe(true);
+    expect(answerMatches("green super eagles sticker", "A green Super Eagles one, peeling")).toBe(
+      true,
+    );
   });
 
   it("rejects vague answers", () => {
@@ -15,7 +17,9 @@ describe("answerMatches", () => {
   });
 
   it("supports a looser threshold for the AI gate", () => {
-    expect(answerMatches("green super eagles sticker", "a green football sticker", 0.25)).toBe(true);
+    expect(answerMatches("green super eagles sticker", "a green football sticker", 0.25)).toBe(
+      true,
+    );
   });
 });
 
