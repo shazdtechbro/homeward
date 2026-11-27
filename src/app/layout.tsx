@@ -17,10 +17,26 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://main.djkawqlksis4l.amplifyapp.com";
+const TITLE = "Homeward · Everything lost at UNILORIN finds its way home";
+const DESCRIPTION =
+  "Snap it, match it, prove it, collect it. The AI lost-and-found network for the University of Ilorin.";
+
 export const metadata: Metadata = {
-  title: "Homeward · Everything lost at UNILORIN finds its way home",
-  description:
-    "Snap it, match it, prove it, collect it. The AI lost-and-found network for the University of Ilorin.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  applicationName: "Homeward",
+  // og:image and twitter:image come from app/opengraph-image.jpg.
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Homeward",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_NG",
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
 };
 
 export const viewport: Viewport = { themeColor: "#FBF8F1" };
