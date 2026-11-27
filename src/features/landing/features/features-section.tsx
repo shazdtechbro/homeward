@@ -21,7 +21,7 @@ type Tile = {
 const TILES: Tile[] = [
   {
     title: "Matric Match",
-    body: "Found an ID card? Textract reads the matric number and we email the owner privately. It never appears in public.",
+    body: "Found an ID card? AI reads the matric number off the photo and tells the owner privately in their inbox. It never appears in public.",
     visual: <MatricMatchVisual />,
     className: "lg:col-span-2",
   },
@@ -32,23 +32,23 @@ const TILES: Tile[] = [
   },
   {
     title: "Proof of ownership",
-    body: "Questions only the real owner can answer, written by AI from details the finder never sees.",
+    body: "The finder sets a question only the real owner can answer. AI checks the answer, allowing for different wording but not guesses.",
     visual: <ProofVisual />,
   },
   {
-    title: "Homeward Spots",
-    body: "Staffed pickup points at the library, SUB and faculties. Hand over, scan a code, done.",
+    title: "Meet on campus",
+    body: "Proof unlocks the finder’s WhatsApp and a one-time pickup code. Meet somewhere public; the finder checks the code before handing over.",
     visual: <SpotsMapVisual />,
     className: "lg:col-span-2",
   },
   {
-    title: "Masked chat",
-    body: "Finders and owners can talk without swapping numbers or names.",
+    title: "Hidden until proved",
+    body: "A finder’s number is hidden from everyone browsing. Only the person who proves ownership ever sees it.",
     visual: <MaskedChatVisual />,
   },
   {
     title: "Karma rewards",
-    body: "Every return earns karma, redeemable at campus cafés and the bookshop. Honesty, rewarded.",
+    body: "Every return earns +50 karma on the finder’s profile. Honesty, counted.",
     visual: <KarmaVisual />,
     className: "bg-sun lg:col-span-2",
   },

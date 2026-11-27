@@ -1,5 +1,6 @@
 "use client";
 
+import { ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useActionState } from "react";
@@ -36,7 +37,7 @@ export function ClaimPanel({ itemId, question, signedIn, attemptsLeft, matricPro
     <AnimatePresence mode="wait">
       {state.status === "verified" ? (
         <motion.div key="ok" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="rounded-[24px] bg-sun p-6">
-          <p className="text-[22px] font-semibold">✓ Ownership proved</p>
+          <p className="flex items-center gap-2 text-[22px] font-semibold"><ShieldCheck aria-hidden className="size-6" /> Ownership proved</p>
           <p className="mt-1 text-ink/80">Loading the finder’s contact…</p>
         </motion.div>
       ) : (

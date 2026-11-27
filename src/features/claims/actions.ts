@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { newPickupCode } from "@/core/domain/claim";
 import { answerMatches, MAX_CLAIM_ATTEMPTS } from "@/core/domain/listing";
 import { KARMA_PER_RETURN } from "@/core/domain/user";
 import { getServices } from "@/infra/container";
@@ -68,6 +69,7 @@ export async function claimItem(_: ClaimState, form: FormData): Promise<ClaimSta
       claimantPhone: user.phone,
       claimantEmail: user.email,
       status: verified ? "verified" : "rejected",
+      pickupCode: verified ? newPickupCode() : undefined,
       createdAt: new Date(),
     });
     logger.info("claim.attempt", { itemId, verified, attempt: failures + 1 });
@@ -86,7 +88,7 @@ export async function claimItem(_: ClaimState, form: FormData): Promise<ClaimSta
         id: crypto.randomUUID(),
         userId: listing.finder.userId,
         kind: "claim-verified",
-        text: `${user.name} proved the ${listing.title} is theirs. They’ll reach out to arrange the handover.`,
+        text: `${user.name} proved the ${listing.title} is theirs. When you meet, ask for their pickup code before you hand it over.`,
         itemId,
         createdAt: new Date(),
       });
@@ -99,39 +101,60 @@ export async function claimItem(_: ClaimState, form: FormData): Promise<ClaimSta
   }
 }
 
-const returnSchema = z.object({
+export type HandoverState = { status: "idle" } | { status: "error"; message: string } | { status: "done"; owner: string };
+
+const handoverSchema = z.object({
   itemId: z.string().min(3).max(40),
-  claimantId: z.string().max(40).optional(),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{4}$/, "Pickup codes are 4 digits."),
   key: z.string().max(64).optional(),
 });
 
-/** The finder (or a guest finder holding the private link) closes the loop. */
-export async function markReturned(form: FormData) {
-  const parsed = returnSchema.safeParse(Object.fromEntries(form));
-  if (!parsed.success) throw new AppError("invalid_input", "Invalid request.");
-  const { itemId, claimantId, key } = parsed.data;
+const checkHandoverRate = createRateLimiter({ limit: 8, windowMs: 60_000 });
+
+/**
+ * The finder types the owner's pickup code at the meet-up. Only a code issued
+ * to a verified claim on this item closes it: wrong person, wrong code, no handover.
+ */
+export async function confirmHandover(_: HandoverState, form: FormData): Promise<HandoverState> {
+  const parsed = handoverSchema.safeParse(Object.fromEntries(form));
+  if (!parsed.success) return { status: "error", message: parsed.error.issues[0]?.message ?? "Check the code." };
+  const { itemId, code, key } = parsed.data;
   const user = await currentUser();
   const { items, users, claims } = getServices();
 
-  const listing = await items.get(itemId);
-  if (!listing) throw new AppError("not_found", "Item not found.");
-  const isFinder = (user && listing.finder.userId === user.id) || (key && listing.manageToken && key === listing.manageToken);
-  if (!isFinder) throw new AppError("unauthorized", "Only the finder can do that.");
+  try {
+    checkHandoverRate(`${itemId}:${user?.id ?? key ?? "anon"}`);
+    const listing = await items.get(itemId);
+    if (!listing) throw new AppError("not_found", "Item not found.");
+    const isFinder = (user && listing.finder.userId === user.id) || (key && listing.manageToken && key === listing.manageToken);
+    if (!isFinder) throw new AppError("unauthorized", "Only the finder can confirm the handover.");
+    if (listing.status === "claimed") return { status: "done", owner: listing.returnedTo ?? "its owner" };
 
-  const claim = claimantId ? (await claims.forItem(itemId)).find((c) => c.claimantId === claimantId && c.status === "verified") : undefined;
-  await items.markReturned(itemId, claim?.claimantName ?? "its owner");
-  if (listing.finder.userId) await users.addKarma(listing.finder.userId, KARMA_PER_RETURN);
-  if (claim) {
+    const claim = (await claims.forItem(itemId)).find((c) => c.status === "verified" && c.pickupCode === code);
+    if (!claim) {
+      logger.warn("handover.wrong_code", { itemId });
+      return { status: "error", message: "That code doesn’t match. Don’t hand it over until it does." };
+    }
+
+    await items.markReturned(itemId, claim.claimantName);
+    if (listing.finder.userId) await users.addKarma(listing.finder.userId, KARMA_PER_RETURN);
     await claims.addNotice({
       id: crypto.randomUUID(),
       userId: claim.claimantId,
       kind: "returned",
-      text: `Your ${listing.title} is marked as returned. Welcome home!`,
+      text: `Your ${listing.title} is back with you. Welcome home!`,
       itemId,
       createdAt: new Date(),
     });
+    logger.info("handover.confirmed", { itemId, karma: Boolean(listing.finder.userId) });
+    revalidatePath(`/items/${itemId}`);
+    revalidatePath("/home");
+    return { status: "done", owner: claim.claimantName };
+  } catch (error) {
+    if (!(error instanceof AppError)) logger.error("handover.failed", { message: String(error) });
+    return { status: "error", message: error instanceof AppError ? error.message : "Something went wrong. Try again." };
   }
-  logger.info("item.returned", { itemId, karma: Boolean(listing.finder.userId) });
-  revalidatePath(`/items/${itemId}`);
-  revalidatePath("/home");
 }

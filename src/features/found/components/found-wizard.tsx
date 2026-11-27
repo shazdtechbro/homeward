@@ -1,5 +1,27 @@
 "use client";
 
+import {
+  Backpack,
+  BatteryCharging,
+  Calculator,
+  Camera,
+  FolderClosed,
+  Glasses,
+  Headphones,
+  IdCard,
+  KeyRound,
+  Laptop,
+  Lock,
+  Milk,
+  NotebookPen,
+  Plug,
+  Shirt,
+  Smartphone,
+  Sparkles,
+  Umbrella,
+  Watch,
+  type LucideIcon,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
@@ -12,25 +34,31 @@ import { cn } from "@/ui/cn";
 import { Field, FormError, inputClass } from "@/ui/field";
 import { analysePhoto, logFoundItem } from "../actions";
 import { COLOUR_OPTIONS, PLACE_KEYS, SUGGESTED_QUESTIONS, WHEN_OPTIONS } from "../schema";
+import { readPhotoOnDevice } from "./on-device-vision";
 import { resizePhoto } from "./resize-photo";
 
-const CATEGORY_ICONS: Record<Category, string> = {
-  laptop: "💻",
-  "laptop-sleeve": "🗂️",
-  phone: "📱",
-  "id-card": "🪪",
-  earbuds: "🎧",
-  keys: "🔑",
-  bag: "🎒",
-  calculator: "🧮",
-  charger: "🔌",
-  "power-bank": "🔋",
-  glasses: "👓",
-  notebook: "📓",
-  scarf: "🧣",
-  umbrella: "☂️",
-  bottle: "🧴",
-  watch: "⌚",
+function CategoryIcon({ category }: { category: Category }) {
+  const Icon = CATEGORY_ICONS[category];
+  return <Icon aria-hidden className="size-5" strokeWidth={1.75} />;
+}
+
+const CATEGORY_ICONS: Record<Category, LucideIcon> = {
+  laptop: Laptop,
+  "laptop-sleeve": FolderClosed,
+  phone: Smartphone,
+  "id-card": IdCard,
+  earbuds: Headphones,
+  keys: KeyRound,
+  bag: Backpack,
+  calculator: Calculator,
+  charger: Plug,
+  "power-bank": BatteryCharging,
+  glasses: Glasses,
+  notebook: NotebookPen,
+  scarf: Shirt,
+  umbrella: Umbrella,
+  bottle: Milk,
+  watch: Watch,
 };
 
 type Draft = {
@@ -60,6 +88,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
   const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
   const [analysing, setAnalysing] = useState(false);
   const [ai, setAi] = useState<ImageAnalysis | null>(null);
+  const [aiSource, setAiSource] = useState<"nova" | "device">("device");
   const [localError, setLocalError] = useState<string>();
   const [draft, setDraft] = useState<Draft>({
     title: "",
@@ -95,11 +124,24 @@ export function FoundWizard({ finder }: { finder: Finder }) {
     try {
       const blob = await resizePhoto(file);
       if (photo) URL.revokeObjectURL(photo.url);
-      setPhoto({ blob, url: URL.createObjectURL(blob) });
+      const url = URL.createObjectURL(blob);
+      setPhoto({ blob, url });
       setAnalysing(true);
       const fd = new FormData();
       fd.set("photo", new File([blob], "photo.jpg", { type: "image/jpeg" }));
-      const result = await analysePhoto(fd);
+      // Nova in the cloud and MobileNet on the device run side by side; Nova wins where it answers.
+      const [cloud, device] = await Promise.all([analysePhoto(fd), readPhotoOnDevice(url)]);
+      const fromNova = Boolean(cloud.title);
+      const category = cloud.category ?? device.category;
+      const colour = cloud.colour ?? device.colour;
+      const result: ImageAnalysis = {
+        ...cloud,
+        category,
+        colour,
+        labels: cloud.labels.length ? cloud.labels : device.labels,
+        title: cloud.title ?? (category ? `${colour ? `${colour[0]!.toUpperCase()}${colour.slice(1)} ` : ""}${CATEGORY_LABELS[category].toLowerCase()}` : undefined),
+      };
+      setAiSource(fromNova ? "nova" : "device");
       setAi(result);
       setDraft((d) => ({
         ...d,
@@ -195,30 +237,38 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       </span>
                     )}
                     <span className="glass absolute bottom-4 left-4 rounded-full px-4 py-2 text-[13px] font-semibold">
-                      {analysing ? "✦ Reading your photo…" : "Tap to retake"}
+                      {analysing ? "Reading your photo…" : "Tap to retake"}
                     </span>
                   </>
                 ) : (
                   <>
-                    <span className="grid size-20 place-items-center rounded-full bg-coral text-[34px] shadow-coral transition-transform group-hover:scale-105">📷</span>
+                    <span className="grid size-20 place-items-center rounded-full bg-coral text-ink shadow-coral transition-transform group-hover:scale-105"><Camera aria-hidden className="size-8" /></span>
                     <span className="mt-5 text-[18px] font-semibold">Take a photo</span>
                     <span className="mt-1 text-[14px] text-ink-2">or choose one from your gallery</span>
                   </>
                 )}
               </button>
 
-              {ai && !analysing && (ai.labels.length > 0 || ai.title) && (
+              {ai && !analysing && (ai.labels.length > 0 || ai.title || ai.colour) && (
                 <div className="mt-5 rounded-[20px] bg-sky/35 p-4" aria-live="polite">
-                  <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase">✦ What the AI saw</p>
+                  <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase"><Sparkles aria-hidden className="mr-1.5 inline size-3.5 align-[-2px]" />{aiSource === "nova" ? "What the AI saw" : "What we read from your photo"}
+                    <span className="ml-2 rounded-full bg-white/80 px-2 py-0.5 text-[10px] tracking-normal text-ink-2 normal-case">{aiSource === "nova" ? "Amazon Nova on Bedrock" : "Read on your device"}</span>
+                  </p>
                   <div className="mt-2.5 flex flex-wrap gap-2">
                     {ai.title && <span className="rounded-full bg-ink px-3 py-1.5 text-[13px] font-semibold text-paper">{ai.title}</span>}
+                    {ai.colour && (
+                      <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-medium capitalize">
+                        <span aria-hidden className="size-3 rounded-full ring-1 ring-ink/15" style={{ background: COLOUR_OPTIONS.find(([n]) => n === ai.colour)?.[1] }} />
+                        {ai.colour}
+                      </span>
+                    )}
                     {ai.labels.slice(0, 6).map((label) => (
                       <span key={label} className="rounded-full bg-white px-3 py-1.5 text-[13px] font-medium">
                         {label}
                       </span>
                     ))}
                   </div>
-                  {ai.matric && <p className="mt-3 text-[13px] text-ink-2">🪪 Read a matric number off the card. We’ll use it to tell the owner privately.</p>}
+                  {ai.matric && <p className="mt-3 text-[13px] text-ink-2"><IdCard aria-hidden className="mr-1 inline size-4 align-[-3px]" />Read a matric number off the card. We’ll use it to tell the owner privately.</p>}
                 </div>
               )}
             </>
@@ -227,7 +277,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
           {step === 1 && (
             <div className="space-y-6">
               <h1 className="font-display-tight text-[36px] sm:text-[46px]">What is it, and where was it?</h1>
-              {ai?.title && <p className="-mt-3 text-[14px] text-ink-2">✦ We filled in what we could from your photo. Check it.</p>}
+              {ai?.title && <p className="-mt-3 text-[14px] text-ink-2"><Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />We filled in what we could from your photo. Check it.</p>}
 
               <Field label="Name it" error={errors.title}>
                 {(a11y) => <input {...a11y} value={draft.title} onChange={(e) => set("title", e.target.value)} placeholder="Black HP laptop" className={inputClass} maxLength={60} />}
@@ -247,9 +297,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                         draft.category === c ? "border-ink bg-ink text-paper" : "border-ink/10 bg-white hover:border-ink/30",
                       )}
                     >
-                      <span className="text-[20px]" aria-hidden>
-                        {CATEGORY_ICONS[c]}
-                      </span>
+                      <CategoryIcon category={c} />
                       {CATEGORY_LABELS[c]}
                     </button>
                   ))}
@@ -283,7 +331,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               </Field>
 
               {draft.category === "id-card" && (
-                <Field label="Matric number on the card" optional error={errors.matric} hint="🔒 ID cards are never listed publicly. If the owner is on Homeward, only they get told.">
+                <Field label="Matric number on the card" optional error={errors.matric} hint={<><Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />ID cards are never listed publicly. If the owner is on Homeward, only they get told.</>}>
                   {(a11y) => <input {...a11y} value={draft.matric} onChange={(e) => set("matric", e.target.value)} placeholder="19/52HA041" className={cn(inputClass, "font-mono uppercase")} />}
                 </Field>
               )}
@@ -356,7 +404,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       draft.question === q ? "border-ink bg-ink text-paper" : "border-ink/10 bg-white hover:border-ink/30",
                     )}
                   >
-                    {i === 0 && ai?.question === q && <span className="mr-1 text-coral">✦</span>}
+                    {i === 0 && ai?.question === q && <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px] text-coral" />}
                     {q}
                   </button>
                 ))}
@@ -365,7 +413,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               <Field label="Your question" error={errors.question}>
                 {(a11y) => <input {...a11y} value={draft.question} onChange={(e) => set("question", e.target.value)} placeholder="What sticker is on the lid?" className={inputClass} maxLength={120} />}
               </Field>
-              <Field label="The answer" error={errors.answer} hint="🔒 Never shown to anyone. Our AI checks claims against it, allowing for different wording.">
+              <Field label="The answer" error={errors.answer} hint={<><Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />Never shown to anyone. Our AI checks claims against it, allowing for different wording.</>}>
                 {(a11y) => <input {...a11y} value={draft.answer} onChange={(e) => set("answer", e.target.value)} placeholder="Green Super Eagles sticker" className={inputClass} maxLength={80} />}
               </Field>
             </div>
@@ -375,7 +423,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
             <div className="space-y-6">
               <h1 className="font-display-tight text-[36px] sm:text-[46px]">How should the owner reach you?</h1>
               <div className="rounded-[20px] bg-green p-5 text-paper">
-                <p className="font-semibold">🔒 Shown only after someone proves it’s theirs.</p>
+                <p className="flex items-center gap-2 font-semibold"><Lock aria-hidden className="size-4" /> Shown only after someone proves it’s theirs.</p>
                 <p className="mt-1 text-[14px] text-paper/80">Meet somewhere public on campus to hand it over: a faculty entrance, the library foyer, the SUB.</p>
               </div>
 

@@ -1,14 +1,14 @@
 import { InViewPlay } from "@/ui/in-view-play";
 
 const SERVICES = [
-  ["Cognito", "university sign-in"],
-  ["Bedrock", "understands every report"],
-  ["Rekognition", "blurs faces and IDs"],
-  ["Textract", "reads matric numbers"],
-  ["S3 Vectors", "finds lookalike items"],
-  ["Step Functions", "runs each claim"],
-  ["Location Service", "maps the Spots"],
-  ["DynamoDB", "stores every item"],
+  ["Amplify", "builds and hosts every release"],
+  ["Bedrock · Nova", "reads reports and photos"],
+  ["DynamoDB", "stores users, items and claims"],
+  ["S3", "keeps photos private and encrypted"],
+  ["CloudFront", "serves the campus fast"],
+  ["Lambda", "runs the server code"],
+  ["IAM", "least-privilege access"],
+  ["CloudWatch", "logs every search and claim"],
 ] as const;
 
 export function AwsStrip() {

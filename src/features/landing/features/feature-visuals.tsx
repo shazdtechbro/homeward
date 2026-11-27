@@ -1,3 +1,4 @@
+import { Check, Lock, Mail } from "lucide-react";
 import { cn } from "@/ui/cn";
 import { Picture } from "@/ui/picture";
 
@@ -24,7 +25,7 @@ export function MatricMatchVisual() {
         <span className="animate-scan absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-transparent via-sky/70 to-transparent" />
       </div>
       <span className="animate-drift glass absolute -right-3 -bottom-4 rounded-full px-3.5 py-2 text-[13px] font-semibold shadow-soft">
-        ✉︎ Emailed privately
+        <Mail aria-hidden className="mr-1.5 inline size-4 align-[-3px]" />Emailed privately
       </span>
     </div>
   );
@@ -67,7 +68,7 @@ export function ProofVisual() {
         A green Super Eagles one, peeling
       </p>
       <p className="animate-cycle-in self-start rounded-full bg-green px-3.5 py-2 text-[13px] font-semibold text-paper" style={delay(1.4)}>
-        ✓ 3 of 3 correct · Ownership proved
+        <Check aria-hidden className="mr-1 inline size-4 align-[-3px]" />3 of 3 correct · Ownership proved
       </p>
     </div>
   );
@@ -114,8 +115,8 @@ export function SpotsMapVisual() {
           <Picture name="persona-mrs-ibrahim" alt="" sizes="36px" className="block size-full" imgClassName="size-full object-cover" />
         </span>
         <span className="text-[12px] leading-tight">
-          <b className="block">Mrs Ibrahim</b>
-          <span className="text-success">● On duty · Library Spot</span>
+          <b className="block">Safe meet points</b>
+          <span className="text-green">Library foyer · SUB · faculties</span>
         </span>
       </div>
     </div>
@@ -126,13 +127,13 @@ export function MaskedChatVisual() {
   return (
     <div className="flex w-full flex-col gap-2 text-[14px] font-medium">
       <p className="animate-cycle-in self-start rounded-[16px] rounded-bl-md bg-white px-3.5 py-2.5 shadow-soft" style={delay(0)}>
-        Hi! I think I found your calculator 🙂
+        Hi! I think I found your calculator
       </p>
       <p className="animate-cycle-in self-end rounded-[16px] rounded-br-md bg-ink px-3.5 py-2.5 text-paper" style={delay(0.7)}>
         Yes!! Call me on <span className="rounded bg-paper/20 px-1 font-mono blur-[3px]">08031234521</span>
       </p>
       <p className="animate-cycle-in self-center rounded-full bg-sky/60 px-3 py-1.5 text-[12px] font-semibold" style={delay(1.4)}>
-        🔒 Numbers stay hidden. Collect at a Spot instead.
+        <Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />Numbers stay hidden. Meet somewhere public.
       </p>
     </div>
   );

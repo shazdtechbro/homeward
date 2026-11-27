@@ -1,5 +1,6 @@
 "use client";
 
+import { Lock, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
@@ -33,7 +34,7 @@ export function LostSearch() {
 
   return (
     <section aria-labelledby="lost-title">
-      <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase">✦ Homeward AI</p>
+      <p className="text-[13px] font-bold tracking-[0.14em] text-coral uppercase"><Sparkles aria-hidden className="mr-1.5 inline size-3.5 align-[-2px]" />Homeward AI</p>
       <h1 id="lost-title" className="font-display-tight mt-3 max-w-[760px] text-[44px] sm:text-[64px]">
         Say what you lost. <em className="font-normal italic">We’ll do the looking.</em>
       </h1>
@@ -153,7 +154,7 @@ export function LostSearch() {
 
               {result.outcome.kind === "private" && (
                 <div className="mt-6 rounded-[24px] bg-green p-6 text-paper">
-                  <p className="text-[20px] font-semibold">🔒 ID cards are matched privately.</p>
+                  <p className="flex items-center gap-2 text-[20px] font-semibold"><Lock aria-hidden className="size-5" /> ID cards are matched privately.</p>
                   {state.privateMatchId ? (
                     <>
                       <p className="mt-2 text-paper/85">Good news: a card with your matric number has been handed in.</p>

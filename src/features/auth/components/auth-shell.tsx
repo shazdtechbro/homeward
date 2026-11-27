@@ -1,12 +1,20 @@
+import { Camera, Check, Lock, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/ui/logo";
 import { Picture, type ImageName } from "@/ui/picture";
+
+const CHIP_ICONS = { camera: Camera, check: Check, lock: Lock, sparkles: Sparkles };
+
+function ChipIcon({ name }: { name: keyof typeof CHIP_ICONS }) {
+  const Icon = CHIP_ICONS[name];
+  return <Icon aria-hidden className="size-4 text-coral" />;
+}
 
 type AuthShellProps = {
   art: ImageName;
   quote: string;
   quoteBy: string;
-  chips: Array<{ icon: string; text: string; className: string }>;
+  chips: Array<{ icon: keyof typeof CHIP_ICONS; text: string; className: string }>;
   children: React.ReactNode;
 };
 
@@ -47,7 +55,7 @@ export function AuthShell({ art, quote, quoteBy, chips, children }: AuthShellPro
             className={`glass animate-drift absolute flex items-center gap-2 rounded-full px-4 py-2.5 text-[14px] font-semibold text-ink shadow-soft ${chip.className}`}
             style={{ animationDelay: `${i * -2.3}s` }}
           >
-            <span aria-hidden>{chip.icon}</span>
+            <ChipIcon name={chip.icon} />
             {chip.text}
           </span>
         ))}

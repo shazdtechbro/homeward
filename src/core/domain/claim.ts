@@ -10,6 +10,11 @@ export type Claim = {
   claimantPhone?: string;
   claimantEmail?: string;
   status: ClaimStatus;
+  /**
+   * Issued when ownership is proved. The owner shows it at the meet-up and the
+   * finder types it in before handing over, so the item goes to the right person.
+   */
+  pickupCode?: string;
   createdAt: Date;
 };
 
@@ -22,3 +27,9 @@ export type Notice = {
   itemId: string;
   createdAt: Date;
 };
+
+/** Four digits, from a CSPRNG. */
+export function newPickupCode(): string {
+  const [n] = crypto.getRandomValues(new Uint32Array(1));
+  return String(n! % 10_000).padStart(4, "0");
+}

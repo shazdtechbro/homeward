@@ -1,5 +1,6 @@
 "use client";
 
+import { Lock } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/ui/cn";
 import { Picture, imageNameOr } from "@/ui/picture";
@@ -105,7 +106,7 @@ function PrivateMatch({ verified }: { verified: boolean }) {
             imgClassName="size-full scale-110 object-cover blur-[10px]"
           />
           <span className="glass absolute inset-0 m-auto flex h-9 w-fit items-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold">
-            🔒 Details hidden
+            <Lock aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />Details hidden
           </span>
         </div>
         <div>

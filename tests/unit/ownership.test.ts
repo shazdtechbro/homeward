@@ -41,3 +41,10 @@ describe("semantic blend", () => {
     expect(withAi[0]?.item.id).toBe(glasses.id);
   });
 });
+
+describe("pickup codes", () => {
+  it("are always four digits", async () => {
+    const { newPickupCode } = await import("@/core/domain/claim");
+    for (let i = 0; i < 200; i++) expect(newPickupCode()).toMatch(/^\d{4}$/);
+  });
+});

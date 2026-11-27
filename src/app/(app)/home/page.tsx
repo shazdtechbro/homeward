@@ -1,3 +1,4 @@
+import { Heart, IdCard, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { signOut } from "@/features/auth/actions";
@@ -11,7 +12,16 @@ import { Picture } from "@/ui/picture";
 export const metadata: Metadata = { title: "Home · Homeward" };
 export const dynamic = "force-dynamic";
 
-const NOTICE_ICON = { "id-card-match": "🪪", "claim-verified": "✓", returned: "💚" } as const;
+const NOTICE_ICON = { "id-card-match": IdCard, "claim-verified": ShieldCheck, returned: Heart } as const;
+
+function NoticeIcon({ kind }: { kind: keyof typeof NOTICE_ICON }) {
+  const Icon = NOTICE_ICON[kind];
+  return (
+    <span className="grid size-9 shrink-0 place-items-center rounded-full bg-sun/60" aria-hidden>
+      <Icon className="size-4" />
+    </span>
+  );
+}
 
 function greeting() {
   const hour = Number(new Intl.DateTimeFormat("en-NG", { hour: "numeric", hour12: false, timeZone: "Africa/Lagos" }).format(new Date()));
@@ -33,7 +43,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-14">
       <section>
-        <p className="text-[15px] font-semibold text-ink-2">{greeting()}{user ? `, ${user.name.split(" ")[0]}` : ""} 👋</p>
+        <p className="text-[15px] font-semibold text-ink-2">{greeting()}{user ? `, ${user.name.split(" ")[0]}` : ""}</p>
         <h1 className="font-display-tight mt-2 text-[44px] sm:text-[64px]">
           What happened <em className="font-normal italic">today?</em>
         </h1>
@@ -82,7 +92,7 @@ export default async function HomePage() {
                   {notices.slice(0, 6).map((n) => (
                     <li key={n.id}>
                       <Link href={`/items/${n.itemId}`} className="flex items-start gap-3 py-3 hover:opacity-80">
-                        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-sun/60" aria-hidden>{NOTICE_ICON[n.kind]}</span>
+                        <NoticeIcon kind={n.kind} />
                         <span>
                           <span className="block text-[15px] font-medium">{n.text}</span>
                           <span className="text-[12px] text-ink-2">{foundAtLabel(n.createdAt)}</span>
@@ -113,7 +123,7 @@ export default async function HomePage() {
                     <Link href={`/items/${c.itemId}`} className="flex items-center justify-between rounded-[16px] bg-white px-4 py-3 ring-1 ring-ink/5">
                       <span className="font-medium">{c.itemTitle}</span>
                       <span className={c.status === "verified" ? "text-[13px] font-semibold text-green" : "text-[13px] text-ink-2"}>
-                        {c.status === "verified" ? "✓ Proved, see contact" : "Answer didn’t match"}
+                        {c.status === "verified" ? (c.pickupCode ? `Pickup code ${c.pickupCode}` : "Proved, see contact") : "Answer didn’t match"}
                       </span>
                     </Link>
                   </li>

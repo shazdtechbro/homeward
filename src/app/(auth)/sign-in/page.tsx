@@ -17,8 +17,8 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
       quote="I got my laptop back the morning of my exam. Someone just… returned it."
       quoteBy="Femi, 400L Mechanical Engineering"
       chips={[
-        { icon: "✦", text: "92% match · Black HP laptop", className: "top-[14%] left-[10%]" },
-        { icon: "✓", text: "Ownership proved", className: "top-[30%] right-[8%]" },
+        { icon: "sparkles", text: "92% match · Black HP laptop", className: "top-[14%] left-[10%]" },
+        { icon: "check", text: "Ownership proved", className: "top-[30%] right-[8%]" },
       ]}
     >
       <SignInForm next={next} />

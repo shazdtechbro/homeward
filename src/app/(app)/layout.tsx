@@ -1,3 +1,4 @@
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/features/auth/actions";
 import { DesktopNav, MobileTabBar } from "@/features/app-shell/app-nav";
@@ -26,7 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           {user ? (
             <div className="flex items-center gap-2">
               <span className="hidden rounded-full bg-sun/50 px-3 py-1.5 font-mono text-[12px] sm:inline" title="Karma">
-                ✦ {user.karma}
+                <Sparkles aria-hidden className="mr-1 inline size-3.5 align-[-2px]" />{user.karma}
               </span>
               <Link href="/home#account" className="grid size-10 place-items-center rounded-full bg-green text-[14px] font-bold text-paper" aria-label="Your account">
                 {initials}

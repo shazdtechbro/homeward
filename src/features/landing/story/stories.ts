@@ -29,7 +29,7 @@ export const STORIES: Story[] = [
     name: "Femi",
     detail: "400L Mechanical Engineering",
     headline: "Laptop back the same night. Final-year project intact.",
-    quote: "Three questions only I could answer, a pickup code, and it was in my hands.",
+    quote: "One question only I could answer, a pickup code at the SUB, and it was in my hands.",
     elapsed: "3h 12m",
   },
   {

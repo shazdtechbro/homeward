@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, Lock } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
@@ -50,7 +51,7 @@ export function SignUpForm({ next }: { next?: string }) {
               )}
               aria-current={shown === i + 1 ? "step" : undefined}
             >
-              {shown > i + 1 ? "✓" : i + 1}
+              {shown > i + 1 ? <Check aria-hidden className="size-3.5" /> : i + 1}
             </span>
             <span className={shown === i + 1 ? "text-ink" : "text-ink-2"}>{label}</span>
             {i === 0 && <span aria-hidden className="mx-1 h-px w-6 bg-ink/15" />}
@@ -104,7 +105,7 @@ export function SignUpForm({ next }: { next?: string }) {
           </div>
 
           <div className={cn("space-y-5", shown !== 2 && "hidden")}>
-            <Field label="Matric number" optional error={errors.matric} hint={<>🔒 If your ID card is ever handed in, only <b>you</b> get told. It’s never shown publicly.</>}>
+            <Field label="Matric number" optional error={errors.matric} hint={<><Lock aria-hidden className="inline size-4 align-[-3px]" /> If your ID card is ever handed in, only <b>you</b> get told. It’s never shown publicly.</>}>
               {(a11y) => <input {...a11y} name="matric" placeholder="19/52HA041" autoCapitalize="characters" defaultValue={values.matric} className={cn(inputClass, "font-mono uppercase")} />}
             </Field>
             <Field label="Phone or WhatsApp" optional error={errors.phone} hint="Shared only with someone who has proved an item is theirs.">

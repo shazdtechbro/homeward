@@ -31,10 +31,10 @@ const STEPS: Step[] = [
     media: { image: "06-phone-moment", alt: "A student answering ownership questions on her phone" },
   },
   {
-    title: "Collect at a Spot",
-    body: "Pick it up from a staffed Homeward Spot with a one-time code. No meeting strangers, no phone numbers.",
+    title: "Get it back",
+    body: "Proof unlocks the finder’s contact and a pickup code. Meet somewhere public on campus; the finder checks your code before handing it over, and earns karma.",
     note: "Pickup code · 4821",
-    media: { image: "03-handoff", alt: "A Homeward Spot attendant handing a student their recovered item" },
+    media: { image: "03-handoff", alt: "A student handing another student their recovered item on campus" },
   },
 ];
 

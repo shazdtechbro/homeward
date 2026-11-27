@@ -1,13 +1,14 @@
 "use client";
 
+import { CircleUser, House, LayoutGrid, Plus, Search, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/ui/cn";
 
 const LINKS = [
-  { href: "/home", label: "Home", icon: "⌂" },
-  { href: "/lost", label: "I lost something", short: "Lost", icon: "⌕" },
-  { href: "/found/new", label: "I found something", short: "Found", icon: "+" },
+  { href: "/home", label: "Home", icon: House },
+  { href: "/lost", label: "I lost something", short: "Lost", icon: Search },
+  { href: "/found/new", label: "I found something", short: "Found", icon: Plus },
 ];
 
 const isActive = (pathname: string, href: string) => pathname === href || (href !== "/home" && pathname.startsWith(href));
@@ -37,7 +38,7 @@ export function DesktopNav() {
 export function MobileTabBar({ signedIn }: { signedIn: boolean }) {
   const pathname = usePathname();
   const [home, lost, found] = LINKS as [(typeof LINKS)[0], (typeof LINKS)[0], (typeof LINKS)[0]];
-  const tab = (href: string, label: string, icon: string) => (
+  const tab = (href: string, label: string, Icon: LucideIcon) => (
     <Link
       href={href}
       aria-current={isActive(pathname, href) ? "page" : undefined}
@@ -46,9 +47,7 @@ export function MobileTabBar({ signedIn }: { signedIn: boolean }) {
         isActive(pathname, href) ? "text-ink" : "text-ink-2",
       )}
     >
-      <span aria-hidden className="text-[20px] leading-none">
-        {icon}
-      </span>
+      <Icon aria-hidden className="size-5" strokeWidth={2} />
       {label}
     </Link>
   );
@@ -65,10 +64,10 @@ export function MobileTabBar({ signedIn }: { signedIn: boolean }) {
         aria-label="I found something"
         className="-mt-7 grid size-16 shrink-0 place-items-center rounded-full bg-coral text-[30px] font-light text-ink shadow-coral ring-4 ring-paper"
       >
-        +
+        <Plus aria-hidden className="size-7" strokeWidth={2.25} />
       </Link>
-      {tab("/lost#recent", "Browse", "▦")}
-      {tab(signedIn ? "/home#account" : "/sign-in", signedIn ? "Me" : "Sign in", "◉")}
+      {tab("/lost#recent", "Browse", LayoutGrid)}
+      {tab(signedIn ? "/home#account" : "/sign-in", signedIn ? "Me" : "Sign in", CircleUser)}
     </nav>
   );
 }

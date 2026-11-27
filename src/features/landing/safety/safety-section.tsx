@@ -1,26 +1,27 @@
+import { IdCard, Lock, PhoneOff, ShieldCheck } from "lucide-react";
 import { Reveal } from "@/ui/reveal";
 import { SectionHeading } from "@/ui/section-heading";
 
 const PROMISES = [
   {
-    glyph: "@",
-    title: "Verified university email",
-    body: "Only @unilorin.edu.ng accounts can post or claim, through Cognito sign-in.",
+    Icon: ShieldCheck,
+    title: "Prove it before you see anything",
+    body: "Claimants answer a question only the real owner could know. Our AI allows for different wording but not for guesses, and three wrong answers locks the claim.",
   },
   {
-    glyph: "◐",
-    title: "IDs and faces auto-blurred",
-    body: "Rekognition finds faces and cards in every photo and blurs them before anything is listed.",
+    Icon: PhoneOff,
+    title: "Your number stays hidden",
+    body: "A finder's contact is revealed only to the person who proved ownership. Nobody browsing can see it.",
   },
   {
-    glyph: "✆",
-    title: "No phone numbers shared",
-    body: "Masked chat and staffed Spots mean nobody ever has to hand a stranger their number.",
+    Icon: IdCard,
+    title: "ID cards are never listed",
+    body: "Cards are matched privately by matric number. Only the student on the card is told, and only they can see its photo.",
   },
   {
-    glyph: "#",
-    title: "One-time pickup codes",
-    body: "A code that works once, at one Spot, for one verified owner. Then it is gone.",
+    Icon: Lock,
+    title: "Locked-down by design",
+    body: "Photos sit in a private, encrypted S3 bucket. Passwords are hashed, sessions are signed, and every form is validated and rate-limited.",
   },
 ];
 
@@ -47,8 +48,8 @@ export function SafetySection() {
               delay={i * 0.06}
               className="rounded-lg border border-paper/15 bg-paper/[0.06] p-6"
             >
-              <span aria-hidden className="grid size-11 place-items-center rounded-full bg-sun font-mono text-[18px] text-ink">
-                {promise.glyph}
+              <span aria-hidden className="grid size-11 place-items-center rounded-full bg-sun text-ink">
+                <promise.Icon className="size-5" />
               </span>
               <h3 className="mt-5 text-[19px] font-semibold">{promise.title}</h3>
               <p className="mt-2 text-[16px] font-medium text-paper/75">{promise.body}</p>
