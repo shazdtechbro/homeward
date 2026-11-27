@@ -1,14 +1,12 @@
 "use client";
 
-import { Arrow, Button, ButtonLink } from "@/ui/button";
+import { Arrow, ButtonLink } from "@/ui/button";
 import { Badge, BadgeTag } from "@/ui/badge";
-import { useScrollTo } from "@/ui/smooth-scroll";
 import { RiseWords } from "./rise-words";
 
 const delay = (seconds: number) => ({ animationDelay: `${seconds}s` });
 
 export function HeroCopy() {
-  const scrollTo = useScrollTo();
 
   return (
     <div className="mx-auto flex max-w-[1180px] flex-col items-center px-5 text-center">
@@ -43,12 +41,12 @@ export function HeroCopy() {
         className="animate-fade-up mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
         style={delay(0.9)}
       >
-        <ButtonLink href="#get-the-app" size="lg" variant="coral">
-          Report something <Arrow />
+        <ButtonLink href="/found/new" size="lg" variant="coral">
+          I found something <Arrow />
         </ButtonLink>
-        <Button size="lg" variant="ghost" onClick={() => scrollTo("#demo")}>
+        <ButtonLink href="/lost" size="lg" variant="ghost">
           I lost something
-        </Button>
+        </ButtonLink>
       </div>
     </div>
   );

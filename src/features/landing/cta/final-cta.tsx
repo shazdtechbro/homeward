@@ -38,10 +38,10 @@ export function FinalCta() {
             </h2>
           </Reveal>
           <Reveal delay={0.1} className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href="#demo" size="lg" variant="coral">
+            <ButtonLink href="/lost" size="lg" variant="coral">
               Find my thing <Arrow />
             </ButtonLink>
-            <ButtonLink href="#how-it-works" size="lg" variant="light">
+            <ButtonLink href="/sign-up" size="lg" variant="light">
               Join the UNILORIN beta
             </ButtonLink>
           </Reveal>

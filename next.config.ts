@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ["motion"],
+    // Photos are shrunk to ~1280px JPEG in the browser; this is headroom, not the norm.
+    serverActions: { bodySizeLimit: "6mb" },
   },
 };
 

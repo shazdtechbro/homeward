@@ -51,15 +51,15 @@ export function SiteNav() {
         </ul>
 
         <div className="flex items-center gap-1">
-          <a
-            href="#get-the-app"
+          <Link
+            href="/sign-in"
             className="hidden rounded-full px-4 py-2 text-[15px] font-semibold text-ink sm:block"
           >
             Sign in
-          </a>
+          </Link>
           <div className="hidden sm:block">
-            <ButtonLink href="#get-the-app">
-              Get the app <Arrow />
+            <ButtonLink href="/home">
+              Open the app <Arrow />
             </ButtonLink>
           </div>
           <button
@@ -86,7 +86,7 @@ export function SiteNav() {
             className="glass absolute inset-x-4 top-20 origin-top rounded-lg p-3 shadow-lift lg:hidden"
           >
             <ul className="flex flex-col">
-              {[...LINKS, { href: "#get-the-app", label: "Sign in" }].map((link, i) => (
+              {[...LINKS, { href: "/sign-in", label: "Sign in" }].map((link, i) => (
                 <motion.li
                   key={link.href}
                   initial={{ opacity: 0, y: 8 }}
@@ -103,8 +103,8 @@ export function SiteNav() {
                 </motion.li>
               ))}
             </ul>
-            <ButtonLink href="#get-the-app" size="lg" className="mt-2 w-full">
-              Get the app <Arrow />
+            <ButtonLink href="/home" size="lg" className="mt-2 w-full">
+              Open the app <Arrow />
             </ButtonLink>
           </motion.div>
         )}
