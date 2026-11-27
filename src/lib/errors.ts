@@ -1,6 +1,12 @@
-export type ErrorCode = "invalid_input" | "rate_limited" | "internal";
+export type ErrorCode = "invalid_input" | "unauthorized" | "not_found" | "rate_limited" | "internal";
 
-const STATUS: Record<ErrorCode, number> = { invalid_input: 400, rate_limited: 429, internal: 500 };
+const STATUS: Record<ErrorCode, number> = {
+  invalid_input: 400,
+  unauthorized: 401,
+  not_found: 404,
+  rate_limited: 429,
+  internal: 500,
+};
 
 export class AppError extends Error {
   constructor(

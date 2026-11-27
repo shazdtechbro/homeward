@@ -1,5 +1,5 @@
 import type { FoundItem } from "@/core/domain/item";
-import { PLACES } from "./campus-places";
+import { PLACES } from "@/core/domain/campus-places";
 
 type Seed = Omit<FoundItem, "foundAt" | "status"> & { hoursAgo: number; ready?: boolean };
 

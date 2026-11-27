@@ -37,10 +37,40 @@ export function scoreCandidate(report: LostReport, item: FoundItem): number {
   return Math.round(score * 100) / 100;
 }
 
-export function rankMatches(report: LostReport, items: FoundItem[], limit = 3, floor = 0.25): Match[] {
+/** How much meaning-based similarity counts when it is available. */
+export const SEMANTIC_WEIGHT = 0.35;
+
+export function cosine(a: number[], b: number[]): number {
+  let dot = 0;
+  let na = 0;
+  let nb = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i]! * b[i]!;
+    na += a[i]! * a[i]!;
+    nb += b[i]! * b[i]!;
+  }
+  return na && nb ? dot / Math.sqrt(na * nb) : 0;
+}
+
+/**
+ * Hybrid ranking: explainable field scores, blended with embedding similarity
+ * when the caller can provide it, so "my specs" still finds "black-framed glasses".
+ */
+export function rankMatches(
+  report: LostReport,
+  items: FoundItem[],
+  limit = 3,
+  floor = 0.25,
+  similarity?: (item: FoundItem) => number | undefined,
+): Match[] {
   return items
     .filter((item) => item.status !== "claimed")
-    .map((item) => ({ item, score: scoreCandidate(report, item) }))
+    .map((item) => {
+      const fields = scoreCandidate(report, item);
+      const sim = similarity?.(item);
+      const score = sim === undefined ? fields : (1 - SEMANTIC_WEIGHT) * fields + SEMANTIC_WEIGHT * Math.max(0, sim);
+      return { item, score: Math.round(score * 100) / 100 };
+    })
     .filter((match) => match.score >= floor)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);

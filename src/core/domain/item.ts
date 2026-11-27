@@ -23,6 +23,25 @@ export type Category = (typeof CATEGORIES)[number];
 
 export type ItemStatus = "logged" | "ready-at-spot" | "claimed";
 
+export const CATEGORY_LABELS: Record<Category, string> = {
+  laptop: "Laptop",
+  "laptop-sleeve": "Laptop sleeve",
+  phone: "Phone",
+  "id-card": "ID card",
+  earbuds: "Earbuds",
+  keys: "Keys",
+  bag: "Bag",
+  calculator: "Calculator",
+  charger: "Charger",
+  "power-bank": "Power bank",
+  glasses: "Glasses",
+  notebook: "Notebook",
+  scarf: "Scarf",
+  umbrella: "Umbrella",
+  bottle: "Bottle",
+  watch: "Watch",
+};
+
 export type FoundItem = {
   id: string;
   title: string;

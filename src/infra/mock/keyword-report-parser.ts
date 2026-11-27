@@ -1,7 +1,7 @@
 import type { Category } from "@/core/domain/item";
 import type { Extracted, LostReport } from "@/core/domain/lost-report";
 import type { ReportParser } from "@/core/ports";
-import { PLACE_ALIASES } from "./campus-places";
+import { PLACE_ALIASES } from "@/core/domain/campus-places";
 
 const CATEGORY_WORDS: Array<[string, Category]> = [
   ["laptop sleeve", "laptop-sleeve"],
