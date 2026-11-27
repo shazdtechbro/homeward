@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120" font-family="Amazon Ember, Segoe UI, Inter, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#232F3E"/></marker>
+    <marker id="arrowg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7D8998"/></marker>
+    <style>
+      .t { font-size: 17px; font-weight: 700; fill: #232F3E; }
+      .s { font-size: 14px; fill: #545B64; }
+      .g { font-size: 15px; font-weight: 700; }
+      .flow { stroke: #232F3E; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .side { stroke: #7D8998; stroke-width: 2; fill: none; stroke-dasharray: 6 5; marker-end: url(#arrowg); }
+      .n { font-size: 13px; font-weight: 800; fill: #fff; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1120" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="60" y="70" font-size="34" font-weight="800" fill="#232F3E">Homeward · AI lost-and-found for the University of Ilorin</text>
+  <text x="60" y="104" font-size="18" fill="#545B64">Deployed architecture on AWS · serverless, least-privilege, pay-per-use</text>
+
+  <!-- Users -->
+  <g transform="translate(60,330)">
+    <rect width="190" height="250" rx="14" fill="#F2F3F3" stroke="#AAB7B8"/>
+    <circle cx="95" cy="70" r="26" fill="none" stroke="#232F3E" stroke-width="3"/>
+    <path d="M45 150 C 45 110, 145 110, 145 150" fill="none" stroke="#232F3E" stroke-width="3"/>
+    <text x="95" y="190" text-anchor="middle" class="t">Students</text>
+    <text x="95" y="212" text-anchor="middle" class="s">Finders &amp; owners</text>
+    <text x="95" y="232" text-anchor="middle" class="s">phone or laptop</text>
+  </g>
+
+  <!-- Developer -->
+  <g transform="translate(60,700)">
+    <rect width="190" height="120" rx="14" fill="#F2F3F3" stroke="#AAB7B8"/>
+    <rect x="70" y="20" width="50" height="34" rx="4" fill="none" stroke="#232F3E" stroke-width="3"/>
+    <path d="M60 62 h70" stroke="#232F3E" stroke-width="3"/>
+    <text x="95" y="90" text-anchor="middle" class="t">Developer</text>
+    <text x="95" y="110" text-anchor="middle" class="s">Homeward team</text>
+  </g>
+  <!-- GitHub -->
+  <g transform="translate(60,890)">
+    <rect width="190" height="140" rx="14" fill="#F2F3F3" stroke="#AAB7B8"/>
+    <circle cx="95" cy="46" r="24" fill="#24292F"/>
+    <text x="95" y="53" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">git</text>
+    <text x="95" y="98" text-anchor="middle" class="t">GitHub</text>
+    <text x="95" y="120" text-anchor="middle" class="s">shazdtechbro/homeward</text>
+  </g>
+  <path d="M155 820 v62" class="flow"/>
+  <rect x="164" y="840" width="70" height="22" rx="4" fill="#fff"/>
+  <text x="170" y="856" font-size="13" font-weight="700" fill="#232F3E">git push</text>
+
+  <!-- AWS Cloud group -->
+  <rect x="330" y="150" width="1420" height="920" fill="none" stroke="#232F3E" stroke-width="2"/>
+  <rect x="330" y="150" width="40" height="40" fill="#232F3E"/>
+  <text x="350" y="177" text-anchor="middle" font-size="13" font-weight="800" fill="#FF9900">aws</text>
+  <text x="384" y="177" class="g" fill="#232F3E">AWS Cloud</text>
+
+  <!-- Amplify group -->
+  <rect x="380" y="220" width="680" height="560" rx="4" fill="#FDF1F3" stroke="#DD344C" stroke-dasharray="8 5" stroke-width="2"/>
+  <text x="400" y="250" class="g" fill="#DD344C">AWS Amplify Hosting · Next.js 15 (frontend + backend)</text>
+
+  <!-- CloudFront -->
+  <g transform="translate(420,300)">
+    <rect width="64" height="64" rx="8" fill="#8C4FFF"/>
+    <circle cx="32" cy="32" r="18" fill="none" stroke="#fff" stroke-width="3"/>
+    <path d="M14 32 h36 M32 14 c-10 10 -10 26 0 36 c10 -10 10 -26 0 -36" fill="none" stroke="#fff" stroke-width="2.5"/>
+    <text x="84" y="26" class="t">Amazon CloudFront</text>
+    <text x="84" y="48" class="s">Global CDN, HTTPS/TLS, caches pages and images</text>
+  </g>
+
+  <!-- Amplify static -->
+  <g transform="translate(420,410)">
+    <rect width="64" height="64" rx="8" fill="#DD344C"/>
+    <path d="M18 48 L32 16 L46 48 M24 36 h16" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/>
+    <text x="84" y="26" class="t">Amplify Hosting · Frontend</text>
+    <text x="84" y="48" class="s">Landing page, app screens, AVIF/WebP image variants</text>
+  </g>
+
+  <!-- Lambda SSR -->
+  <g transform="translate(420,520)">
+    <rect width="64" height="64" rx="8" fill="#ED7100"/>
+    <text x="32" y="46" text-anchor="middle" font-size="40" font-weight="700" fill="#fff">λ</text>
+    <text x="84" y="26" class="t">AWS Lambda · Backend (Amplify SSR compute)</text>
+    <text x="84" y="48" class="s">Server actions &amp; API: auth, listings, AI search,</text>
+    <text x="84" y="68" class="s">claims, pickup-code handover · zod validation, rate limits</text>
+  </g>
+
+  <!-- CI/CD -->
+  <g transform="translate(420,650)">
+    <rect width="64" height="64" rx="8" fill="#DD344C"/>
+    <path d="M20 26 a14 14 0 0 1 24 -4 M44 38 a14 14 0 0 1 -24 4" fill="none" stroke="#fff" stroke-width="3"/>
+    <path d="M44 14 v9 h-9 M20 50 v-9 h9" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="84" y="26" class="t">Amplify CI/CD</text>
+    <text x="84" y="48" class="s">GitHub webhook on every git push → pnpm install → next build</text>
+    <text x="84" y="68" class="s">→ deploys frontend (CloudFront) and backend (Lambda)</text>
+  </g>
+
+  <!-- Region group -->
+  <rect x="1110" y="220" width="600" height="560" fill="none" stroke="#147EBA" stroke-dasharray="8 5" stroke-width="2"/>
+  <text x="1130" y="250" class="g" fill="#147EBA">Region · Europe (Stockholm) eu-north-1</text>
+
+  <!-- DynamoDB -->
+  <g transform="translate(1140,290)">
+    <rect width="64" height="64" rx="8" fill="#C925D1"/>
+    <ellipse cx="32" cy="20" rx="16" ry="6" fill="none" stroke="#fff" stroke-width="3"/>
+    <path d="M16 20 v24 c0 8 32 8 32 0 v-24 M16 32 c0 8 32 8 32 0" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="84" y="26" class="t">Amazon DynamoDB · Database</text>
+    <text x="84" y="48" class="s">Single table, on-demand: users, listings, claims,</text>
+    <text x="84" y="68" class="s">pickup codes, inbox · encrypted at rest</text>
+  </g>
+
+  <!-- S3 -->
+  <g transform="translate(1140,420)">
+    <rect width="64" height="64" rx="8" fill="#7AA116"/>
+    <path d="M16 20 h32 l-4 28 c-1 4 -23 4 -24 0 z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="32" cy="20" rx="16" ry="5" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="84" y="26" class="t">Amazon S3 · Photo storage</text>
+    <text x="84" y="48" class="s">Private bucket, public access blocked, AES-256;</text>
+    <text x="84" y="68" class="s">photos served only through the app</text>
+  </g>
+
+  <!-- Bedrock -->
+  <g transform="translate(1140,550)">
+    <rect width="64" height="64" rx="8" fill="#01A88D"/>
+    <path d="M32 12 L37 27 L52 32 L37 37 L32 52 L27 37 L12 32 L27 27 Z" fill="#fff"/>
+    <text x="84" y="26" class="t">Amazon Bedrock · Amazon Nova 2 Lite</text>
+    <text x="84" y="48" class="s">Reads lost reports &amp; found-item photos, drafts listings,</text>
+    <text x="84" y="68" class="s">reads matric numbers, checks ownership answers</text>
+  </g>
+
+  <!-- IAM -->
+  <g transform="translate(1140,670)">
+    <rect width="64" height="64" rx="8" fill="#DD344C"/>
+    <path d="M32 12 l16 6 v12 c0 12 -8 18 -16 22 c-8 -4 -16 -10 -16 -22 v-12 z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M25 32 l5 5 l9 -10" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="84" y="26" class="t">AWS IAM · Security</text>
+    <text x="84" y="48" class="s">Least-privilege policy: only this table, bucket and Nova</text>
+  </g>
+
+  <!-- CloudWatch -->
+  <g transform="translate(420,860)">
+    <rect width="64" height="64" rx="8" fill="#E7157B"/>
+    <path d="M14 46 l10 -12 l9 7 l17 -20" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="84" y="26" class="t">Amazon CloudWatch · Observability</text>
+    <text x="84" y="48" class="s">Structured JSON logs: searches, claims, handovers, AI fallbacks</text>
+  </g>
+
+  <!-- Flows -->
+  <path d="M250 455 C 330 455, 340 332, 412 332" class="flow"/>
+  <path d="M452 368 v34" class="flow"/>
+  <path d="M452 478 v34" class="flow"/>
+  <path d="M1000 552 C 1080 552, 1080 322, 1132 322" class="flow"/>
+  <path d="M1000 562 C 1090 562, 1090 452, 1132 452" class="flow"/>
+  <path d="M1000 572 L 1132 582" class="flow"/>
+  <path d="M250 960 C 350 960, 340 682, 412 682" class="flow"/>
+
+  
+  
+  <path d="M1172 668 v-44" class="side"/>
+  <path d="M452 648 v-54" class="side"/>
+  <path d="M452 780 v70" class="side"/>
+  <text x="462" y="822" font-size="12" font-weight="700" fill="#7D8998">logs</text>
+
+  <!-- Numbered steps -->
+  <g><circle cx="300" cy="410" r="14" fill="#232F3E"/><text x="300" y="415" text-anchor="middle" class="n">1</text></g>
+  <g><circle cx="1050" cy="300" r="14" fill="#232F3E"/><text x="1050" y="305" text-anchor="middle" class="n">2</text></g>
+  <g><circle cx="1068" cy="470" r="14" fill="#232F3E"/><text x="1068" y="475" text-anchor="middle" class="n">3</text></g>
+  <g><circle cx="1068" cy="600" r="14" fill="#232F3E"/><text x="1068" y="605" text-anchor="middle" class="n">4</text></g>
+  <g><circle cx="300" cy="880" r="14" fill="#232F3E"/><text x="300" y="885" text-anchor="middle" class="n">5</text></g>
+
+  <!-- Legend -->
+  <g transform="translate(1110,840)">
+    <rect width="600" height="200" rx="10" fill="#F2F3F3"/>
+    <text x="24" y="36" class="g" fill="#232F3E">Request flow</text>
+    <text x="24" y="66" class="s">1  Student opens Homeward over HTTPS through CloudFront</text>
+    <text x="24" y="90" class="s">2  Backend reads/writes users, listings, claims in DynamoDB</text>
+    <text x="24" y="114" class="s">3  Found-item photos stored privately in S3</text>
+    <text x="24" y="138" class="s">4  Nova reads reports &amp; photos and checks ownership answers</text>
+    <text x="24" y="162" class="s">5  git push → GitHub webhook → Amplify builds and deploys frontend + backend</text>
+    <text x="24" y="186" class="s">Dashed: IAM-scoped access and CloudWatch logging</text>
+  </g>
+</svg>

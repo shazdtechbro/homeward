@@ -11,3 +11,12 @@ test-results
 # Source PNGs are large; the optimised variants in public/images are committed.
 assets-src
 .preview
+
+# Local submission drafts
+docs/submission/
+.env.amplify
+
+# Local tooling
+.claude/
+.claude-*
+CLAUDE.md
