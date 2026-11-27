@@ -5,6 +5,7 @@ import {
   RekognitionClient,
   type RekognitionClientConfig,
 } from "@aws-sdk/client-rekognition";
+import { createHash } from "node:crypto";
 import sharp from "sharp";
 import { CATEGORIES, type Category } from "@/core/domain/item";
 import type { ImageAnalysis, ImageAnalyzer } from "@/core/ports";
@@ -13,13 +14,13 @@ import type { JsonModel } from "./model";
 
 /**
  * Vision models bill by image size and free tiers cap tokens per minute, so the
- * model gets a 640px copy: plenty to recognise an object or read a matric number.
+ * model gets a 640px copy: enough to read labels and brands reliably.
  */
 async function forModel(bytes: Uint8Array): Promise<Uint8Array> {
   const small = await sharp(bytes)
     .rotate()
     .resize(640, 640, { fit: "inside", withoutEnlargement: true })
-    .jpeg({ quality: 72 })
+    .jpeg({ quality: 78 })
     .toBuffer();
   return new Uint8Array(small);
 }
@@ -54,18 +55,14 @@ type Reading = {
   unsafe?: boolean;
 };
 
-const READ_PROMPT = `You help a student at the University of Ilorin post a found item to a lost-and-found app.
-Look at the photo and return:
-- labels: up to 6 short nouns for what you see, e.g. ["Calculator", "Electronics"]
-- title: 2–5 words, e.g. "Black HP laptop"
-- category: one of ${CATEGORIES.join(", ")}
-- colour: one of ${COLOURS.join(", ")}
-- brand: the brand if clearly visible, else null
-- description: one neutral sentence. Never include names, ID numbers, phone numbers or anything personal you can read.
-- question: a question only the real owner could answer, about something NOT visible in this photo ("What's the lock-screen picture?")
-- matric: only if this is a student ID card, the matric number printed on it (format like 19/52HA041), else null
-- unsafe: true if the photo contains nudity, violence, gore, or is not a photo of an object at all
-Shape: {"labels":[], "title":..., "category":..., "colour":..., "brand":..., "description":..., "question":..., "matric":..., "unsafe":...}`;
+const READ_PROMPT = `Draft a campus lost-and-found listing from this photo of a found item. JSON fields:
+labels: up to 5 short nouns seen; title: 2-5 words like "Black HP laptop";
+category: exactly one of ${CATEGORIES.join("|")} (use other if none fit);
+colour: exactly one of ${COLOURS.join("|")}; brand: if visible, else null;
+description: one neutral sentence, no names or numbers read off the item;
+question: something only the owner would know that is NOT visible here;
+matric: matric number like 19/52HA041 if it is a student ID card, else null;
+unsafe: true only for nudity, violence or gore.`;
 
 const SAFETY_PROMPT = `Is this photo safe to show publicly on a campus lost-and-found site?
 Unsafe means nudity, sexual content, violence, gore or hateful symbols. Shape: {"unsafe": true | false}`;
@@ -74,7 +71,15 @@ Unsafe means nudity, sexual content, violence, gore or hateful symbols. Shape: {
  * The AI reads the photo and drafts the listing in one call. Where the region
  * offers Rekognition, its labels and moderation are layered on top.
  */
+const hash = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+
 export class AiImageAnalyzer implements ImageAnalyzer {
+  /**
+   * The safety verdict from the analysis a finder already ran, keyed by photo
+   * hash, so posting the same photo doesn't spend a second vision call.
+   */
+  private readonly verdicts = new Map<string, boolean>();
+
   private readonly rekognition?: RekognitionClient;
 
   constructor(
@@ -101,6 +106,8 @@ export class AiImageAnalyzer implements ImageAnalyzer {
   }
 
   async isUnsafe(bytes: Uint8Array) {
+    const known = this.verdicts.get(hash(bytes));
+    if (known !== undefined) return known;
     try {
       if (this.rekognition) {
         const result = await this.rekognition.send(
@@ -118,6 +125,14 @@ export class AiImageAnalyzer implements ImageAnalyzer {
       logger.warn("ai.moderation_failed", { message: String(error).slice(0, 200) });
       return false;
     }
+  }
+
+  private remember(bytes: Uint8Array, unsafe: boolean, known: boolean) {
+    if (known) {
+      if (this.verdicts.size > 500) this.verdicts.clear();
+      this.verdicts.set(hash(bytes), unsafe);
+    }
+    return unsafe;
   }
 
   async analyze(bytes: Uint8Array): Promise<ImageAnalysis> {
@@ -155,7 +170,7 @@ export class AiImageAnalyzer implements ImageAnalyzer {
       description: ai?.description?.slice(0, 280),
       question: ai?.question?.slice(0, 120),
       matric,
-      unsafe: ai?.unsafe === true,
+      unsafe: this.remember(bytes, ai?.unsafe === true, Boolean(ai)),
     };
   }
 }

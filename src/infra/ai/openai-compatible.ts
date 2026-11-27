@@ -44,7 +44,7 @@ export class OpenAiCompatibleModel implements JsonModel {
           temperature: 0,
           response_format: { type: "json_object" },
         }),
-        signal: AbortSignal.timeout(15_000),
+        signal: AbortSignal.timeout(25_000),
       });
 
     // One retry on a dropped connection: campus networks blip.
@@ -52,7 +52,8 @@ export class OpenAiCompatibleModel implements JsonModel {
     // Free tiers cap tokens per minute. Wait out a short limit once instead of failing.
     if (response.status === 429) {
       const wait = Number(response.headers.get("retry-after")) || 2;
-      if (wait <= 6) {
+      // Free tiers reset each minute; a short wait beats a silent fallback.
+      if (wait <= 20) {
         await new Promise((resolve) => setTimeout(resolve, wait * 1000));
         response = await send();
       }
