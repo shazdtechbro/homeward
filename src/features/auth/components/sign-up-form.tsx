@@ -19,7 +19,11 @@ export function SignUpForm({ next }: { next?: string }) {
   const [step, setStep] = useState<1 | 2>(1);
   const [firstName, setFirstName] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
-  const errors = state.fieldErrors ?? {};
+  // The server's answer stays in `state` until the next submit. Once the person
+  // has fixed things and pressed Continue, it must stop pinning them to step 1.
+  const [handled, setHandled] = useState<FormState | null>(null);
+  const fresh = state !== handled;
+  const errors = fresh ? (state.fieldErrors ?? {}) : {};
   const values = state.values ?? {};
 
   // A server error on a step-one field sends you back to fix it.
@@ -38,6 +42,7 @@ export function SignUpForm({ next }: { next?: string }) {
       return;
     }
     setFirstName(required[0]!.value.trim().split(/\s+/)[0] ?? "");
+    setHandled(state);
     setStep(2);
   }
 
@@ -96,7 +101,7 @@ export function SignUpForm({ next }: { next?: string }) {
         </AnimatePresence>
 
         <div className="mt-8 space-y-5">
-          <FormError message={state.error} />
+          <FormError message={fresh ? state.error : undefined} />
 
           <div className={cn("space-y-5", shown !== 1 && "hidden")}>
             <Field label="Full name" error={errors.name}>
@@ -130,6 +135,8 @@ export function SignUpForm({ next }: { next?: string }) {
             <Field label="Password" error={errors.password}>
               {(a11y) => (
                 <PasswordInput
+                  // React resets the form after a failed submit; remount so the strength meter resets too.
+                  key={JSON.stringify(state)}
                   {...a11y}
                   name="password"
                   autoComplete="new-password"
