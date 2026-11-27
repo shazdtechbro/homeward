@@ -1,0 +1,17 @@
+export const FACULTIES = [
+  "Agriculture",
+  "Arts",
+  "Basic Medical Sciences",
+  "Clinical Sciences",
+  "Communication and Information Sciences",
+  "Education",
+  "Engineering and Technology",
+  "Environmental Sciences",
+  "Law",
+  "Life Sciences",
+  "Management Sciences",
+  "Pharmaceutical Sciences",
+  "Physical Sciences",
+  "Social Sciences",
+  "Veterinary Medicine",
+] as const;
