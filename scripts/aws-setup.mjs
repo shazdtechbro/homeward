@@ -26,10 +26,11 @@ const ROOT = path.resolve(import.meta.dirname, "..");
 const ENV_FILE = path.join(ROOT, ".env.local");
 
 const env = process.env;
-const region = env.HOMEWARD_REGION || "us-east-1";
+const region = env.HOMEWARD_REGION || "eu-north-1";
 const table = env.HOMEWARD_TABLE || "homeward";
-const textModel = env.HOMEWARD_TEXT_MODEL || "us.amazon.nova-2-lite-v1:0";
-const embedModel = env.HOMEWARD_EMBED_MODEL || "amazon.titan-embed-text-v2:0";
+const textModel = env.HOMEWARD_TEXT_MODEL || "eu.amazon.nova-2-lite-v1:0";
+const embedModel = env.HOMEWARD_EMBED_MODEL;
+const rekognitionRegion = env.HOMEWARD_REKOGNITION_REGION;
 
 if (!env.HOMEWARD_ACCESS_KEY_ID || !env.HOMEWARD_SECRET_ACCESS_KEY) {
   console.error("✗ Put HOMEWARD_ACCESS_KEY_ID and HOMEWARD_SECRET_ACCESS_KEY in .env.local first (see docs/AWS-SETUP.md, Part 4).");
@@ -132,39 +133,51 @@ async function ensureSecret() {
 
 async function checkAi() {
   const sample = await sharp(path.join(ROOT, "public/images/found-calculator-216.webp")).jpeg().toBuffer();
-  try {
-    const { Labels } = await new RekognitionClient(config).send(new DetectLabelsCommand({ Image: { Bytes: sample }, MaxLabels: 5 }));
-    ok(`Rekognition sees: ${Labels.map((l) => l.Name).join(", ")}`);
-  } catch (error) {
-    fail("Rekognition", error);
-  }
-
   const bedrock = new BedrockRuntimeClient(config);
+
   try {
     const result = await bedrock.send(
       new ConverseCommand({
         modelId: textModel,
-        messages: [{ role: "user", content: [{ text: "Reply with the single word: ready" }] }],
-        inferenceConfig: { maxTokens: 10 },
+        messages: [
+          {
+            role: "user",
+            content: [{ image: { format: "jpeg", source: { bytes: sample } } }, { text: "Name this object in three words." }],
+          },
+        ],
+        inferenceConfig: { maxTokens: 20 },
       }),
     );
-    ok(`Bedrock ${textModel} says: ${result.output.message.content[0].text.trim()}`);
+    ok(`Bedrock ${textModel} sees: ${result.output.message.content[0].text.trim()}`);
   } catch (error) {
-    fail(`Bedrock ${textModel} (the app falls back to the built-in parser if this stays off)`, error);
+    fail(`Bedrock ${textModel} (the app falls back to its built-in parser while this is off)`, error);
   }
 
-  try {
-    const result = await bedrock.send(
-      new InvokeModelCommand({
-        modelId: embedModel,
-        contentType: "application/json",
-        body: JSON.stringify({ inputText: "black HP laptop", dimensions: 512, normalize: true }),
-      }),
-    );
-    const { embedding } = JSON.parse(new TextDecoder().decode(result.body));
-    ok(`Bedrock ${embedModel} returned a ${embedding.length}-number vector`);
-  } catch (error) {
-    fail(`Bedrock ${embedModel}`, error);
+  if (rekognitionRegion) {
+    try {
+      const { Labels } = await new RekognitionClient({ ...config, region: rekognitionRegion }).send(
+        new DetectLabelsCommand({ Image: { Bytes: sample }, MaxLabels: 5 }),
+      );
+      ok(`Rekognition (${rekognitionRegion}) sees: ${Labels.map((l) => l.Name).join(", ")}`);
+    } catch (error) {
+      fail("Rekognition", error);
+    }
+  }
+
+  if (embedModel) {
+    try {
+      const result = await bedrock.send(
+        new InvokeModelCommand({
+          modelId: embedModel,
+          contentType: "application/json",
+          body: JSON.stringify({ inputText: "black HP laptop", dimensions: 512, normalize: true }),
+        }),
+      );
+      const { embedding } = JSON.parse(new TextDecoder().decode(result.body));
+      ok(`Bedrock ${embedModel} returned a ${embedding.length}-number vector`);
+    } catch (error) {
+      fail(`Bedrock ${embedModel}`, error);
+    }
   }
 }
 

@@ -14,7 +14,7 @@ import { env } from "@/lib/env";
 import { awsClientConfig } from "./aws/config";
 import { DynamoClaimRepository, DynamoListingRepository, DynamoTable, DynamoUserRepository } from "./aws/dynamo-store";
 import { Bedrock, NovaAnswerJudge, NovaReportParser, TitanEmbedder } from "./aws/bedrock";
-import { AwsImageAnalyzer } from "./aws/rekognition-analyzer";
+import { AwsImageAnalyzer } from "./aws/image-analyzer";
 import { S3PhotoStorage } from "./aws/s3-photo-storage";
 import { withDemoSeeds } from "./demo-seeds";
 import { HybridMatchService } from "./mock/in-memory-match-service";
@@ -61,15 +61,16 @@ function createMockServices(): Services {
 function createAwsServices(): Services {
   const config = awsClientConfig();
   const table = new DynamoTable(config, env.HOMEWARD_TABLE);
-  const bedrock = new Bedrock(config, env.HOMEWARD_TEXT_MODEL, env.HOMEWARD_EMBED_MODEL);
+  const bedrock = new Bedrock(config, env.HOMEWARD_TEXT_MODEL, env.HOMEWARD_EMBED_MODEL ?? "");
+  const rekognition = env.HOMEWARD_REKOGNITION_REGION ? { ...config, region: env.HOMEWARD_REKOGNITION_REGION } : undefined;
   return assemble({
     listings: new DynamoListingRepository(table),
     users: new DynamoUserRepository(table),
     claims: new DynamoClaimRepository(table),
     photos: new S3PhotoStorage(config, env.HOMEWARD_BUCKET!),
-    vision: new AwsImageAnalyzer(config, bedrock),
+    vision: new AwsImageAnalyzer(bedrock, rekognition),
     reportParser: new NovaReportParser(bedrock, new KeywordReportParser()),
-    embedder: new TitanEmbedder(bedrock),
+    embedder: env.HOMEWARD_EMBED_MODEL ? new TitanEmbedder(bedrock) : undefined,
     judge: new NovaAnswerJudge(bedrock),
   });
 }

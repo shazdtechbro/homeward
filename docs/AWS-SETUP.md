@@ -2,7 +2,7 @@
 
 Checked against AWS docs in November 2026. Everything here runs on the AWS **Free plan** credits.
 
-**Region for everything: US East (N. Virginia) `us-east-1`.** Pick it in the region menu at the top right of the console, every time. It's the region where all the Bedrock models we use are available.
+**Region: your project's home region.** New AWS accounts are "projects" pinned to one home region, and every other region is blocked ("explicit deny in a service control policy"). To find yours, go to **settings.aws.com → Projects → your project → Additional info → Region**. Homeward's account is **Europe (Stockholm) `eu-north-1`**, so the app defaults to it. Bedrock is called through the EU Nova profile (`eu.amazon.nova-2-lite-v1:0`). Rekognition isn't offered in Stockholm, so Nova reads the photos on its own.
 
 ---
 
@@ -68,7 +68,7 @@ You'll get an email the moment anything costs even one cent beyond your credits.
         "dynamodb:CreateTable", "dynamodb:DescribeTable", "dynamodb:GetItem", "dynamodb:PutItem",
         "dynamodb:UpdateItem", "dynamodb:DeleteItem", "dynamodb:Query", "dynamodb:ConditionCheckItem"
       ],
-      "Resource": ["arn:aws:dynamodb:us-east-1:*:table/homeward", "arn:aws:dynamodb:us-east-1:*:table/homeward/index/*"]
+      "Resource": ["arn:aws:dynamodb:*:*:table/homeward", "arn:aws:dynamodb:*:*:table/homeward/index/*"]
     },
     {
       "Sid": "Photos",
@@ -82,7 +82,7 @@ You'll get an email the moment anything costs even one cent beyond your credits.
     {
       "Sid": "Vision",
       "Effect": "Allow",
-      "Action": ["rekognition:DetectLabels", "rekognition:DetectText", "rekognition:DetectModerationLabels"],
+      "Action": ["rekognition:DetectLabels", "rekognition:DetectModerationLabels"],
       "Resource": "*"
     },
     {
@@ -92,6 +92,7 @@ You'll get an email the moment anything costs even one cent beyond your credits.
       "Resource": [
         "arn:aws:bedrock:*::foundation-model/amazon.nova-*",
         "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-*",
+        "arn:aws:bedrock:*:*:inference-profile/eu.amazon.nova-*",
         "arn:aws:bedrock:*:*:inference-profile/us.amazon.nova-*",
         "arn:aws:bedrock:*:*:inference-profile/global.amazon.nova-*"
       ]
@@ -112,7 +113,7 @@ This is **least privilege**: the app can only touch its own table, its own photo
 
 ```
 HOMEWARD_ADAPTERS=aws
-HOMEWARD_REGION=us-east-1
+HOMEWARD_REGION=eu-north-1
 HOMEWARD_ACCESS_KEY_ID=paste-access-key-id
 HOMEWARD_SECRET_ACCESS_KEY=paste-secret-access-key
 ```
@@ -154,7 +155,7 @@ The live site uses a **role** instead of keys, so no secret is stored in Amplify
 | Key | Value |
 |---|---|
 | `HOMEWARD_ADAPTERS` | `aws` |
-| `HOMEWARD_REGION` | `us-east-1` |
+| `HOMEWARD_REGION` | `eu-north-1` |
 | `HOMEWARD_TABLE` | `homeward` |
 | `HOMEWARD_BUCKET` | `homeward-photos-…` (from `.env.local`) |
 | `HOMEWARD_SESSION_SECRET` | long random string (from `.env.local`) |
