@@ -63,21 +63,26 @@ export function rankMatches(
   floor = 0.25,
   similarity?: (item: FoundItem) => number | undefined,
 ): Match[] {
-  return items
-    .filter((item) => item.status !== "claimed")
-    .map((item) => {
-      const fields = scoreCandidate(report, item);
-      const sim = similarity?.(item);
-      const score =
-        sim === undefined
-          ? fields
-          : // Similarity closes part of the gap to 1, so it can lift a score but never sink one.
-            fields + SEMANTIC_WEIGHT * Math.max(0, sim) * (1 - fields);
-      return { item, score: Math.round(score * 100) / 100 };
-    })
-    .filter((match) => match.score >= floor)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit);
+  return (
+    items
+      .filter((item) => item.status !== "claimed")
+      // Once the person has said what it is, other kinds of item aren't candidates,
+      // however well the colour or place lines up.
+      .filter((item) => !report.category || categoryScore(report.category.value, item.category) > 0)
+      .map((item) => {
+        const fields = scoreCandidate(report, item);
+        const sim = similarity?.(item);
+        const score =
+          sim === undefined
+            ? fields
+            : // Similarity closes part of the gap to 1, so it can lift a score but never sink one.
+              fields + SEMANTIC_WEIGHT * Math.max(0, sim) * (1 - fields);
+        return { item, score: Math.round(score * 100) / 100 };
+      })
+      .filter((match) => match.score >= floor)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit)
+  );
 }
 
 const STOP = new Set([

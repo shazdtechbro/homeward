@@ -38,3 +38,17 @@ describe("rankMatches", () => {
     expect(rankMatches(report, claimed)).toEqual([]);
   });
 });
+
+describe("category strictness", () => {
+  it("drops other kinds of item once the category is known", async () => {
+    const { rankMatches } = await import("@/core/domain/matching");
+    const { buildCatalogue } = await import("@/infra/mock/catalogue");
+    const report = {
+      text: "black casio calculator",
+      category: { value: "calculator" as const, evidence: "calculator" },
+      colour: { value: "black", evidence: "black" },
+    };
+    const matches = rankMatches(report, buildCatalogue(), 5);
+    expect(matches.every((m) => m.item.category === "calculator")).toBe(true);
+  });
+});

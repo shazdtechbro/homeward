@@ -210,7 +210,10 @@ export function AssistantChat() {
               hasMatric: event.hasMatric,
             });
           } else if (event.type === "token") {
-            update(reply.id, (m) => ({ content: m.content + event.text }));
+            // Belt and braces: the reply is plain text, so drop any markdown emphasis.
+            update(reply.id, (m) => ({
+              content: (m.content + event.text).replace(/\*\*|__/g, ""),
+            }));
           } else if (event.type === "suggestions") {
             setQuickReplies(event.items);
           }
