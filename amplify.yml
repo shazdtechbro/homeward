@@ -8,6 +8,8 @@ frontend:
         - pnpm install --frozen-lockfile
     build:
       commands:
+        # Amplify only exposes env vars to the Next.js server if they are in .env.production.
+        - env | grep -e '^HOMEWARD_' >> .env.production || true
         - pnpm build
   artifacts:
     baseDirectory: .next
