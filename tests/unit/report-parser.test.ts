@@ -25,3 +25,10 @@ describe("KeywordReportParser", () => {
     expect(report.brand).toBeUndefined();
   });
 });
+
+describe("bag phrases", () => {
+  it("reads a laptop bag as a bag, not a laptop", async () => {
+    const report = await new KeywordReportParser().parse("I lost my navy laptop bag at engineering");
+    expect(report.category?.value).toBe("bag");
+  });
+});

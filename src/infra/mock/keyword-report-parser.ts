@@ -6,6 +6,10 @@ import { PLACE_ALIASES } from "@/core/domain/campus-places";
 const CATEGORY_WORDS: Array<[string, Category]> = [
   ["laptop sleeve", "laptop-sleeve"],
   ["sleeve", "laptop-sleeve"],
+  // "laptop bag" is a bag, so the bag phrases must win over plain "laptop".
+  ["laptop bag", "bag"],
+  ["laptop backpack", "bag"],
+  ["school bag", "bag"],
   ["macbook", "laptop"],
   ["laptop", "laptop"],
   ["student id", "id-card"],
