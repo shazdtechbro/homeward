@@ -14,7 +14,9 @@ import {
   Lock,
   Milk,
   NotebookPen,
+  Package,
   Plug,
+  Router,
   Shirt,
   Smartphone,
   Umbrella,
@@ -78,6 +80,8 @@ const CATEGORY_ICONS: Record<Category, LucideIcon> = {
   umbrella: Umbrella,
   bottle: Milk,
   watch: Watch,
+  electronics: Router,
+  other: Package,
 };
 
 type Draft = {
@@ -147,6 +151,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
       if (photo) URL.revokeObjectURL(photo.url);
       const url = URL.createObjectURL(blob);
       setPhoto({ blob, url });
+      setAi(null);
       setAnalysing(true);
       const fd = new FormData();
       fd.set("photo", new File([blob], "photo.jpg", { type: "image/jpeg" }));
@@ -168,15 +173,16 @@ export function FoundWizard({ finder }: { finder: Finder }) {
       };
       setAiSource(fromAi ? "ai" : "device");
       setAi(result);
+      // A new photo means a new item: replace what the last photo filled in.
       setDraft((d) => ({
         ...d,
-        title: d.title || result.title || "",
-        category: d.category || result.category || "",
-        colour: d.colour || result.colour || "",
-        brand: d.brand || result.brand || "",
-        description: d.description || result.description || "",
-        question: d.question || result.question || "",
-        matric: d.matric || result.matric || "",
+        title: result.title ?? "",
+        category: result.category ?? "",
+        colour: result.colour ?? "",
+        brand: result.brand ?? "",
+        description: result.description ?? "",
+        question: result.question ?? "",
+        matric: result.matric ?? "",
       }));
       if (result.unsafe)
         setLocalError("That photo can’t be posted. Take a clear photo of just the item.");

@@ -17,6 +17,8 @@ export const CATEGORIES = [
   "umbrella",
   "bottle",
   "watch",
+  "electronics",
+  "other",
 ] as const;
 
 export type Category = (typeof CATEGORIES)[number];
@@ -40,6 +42,8 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   umbrella: "Umbrella",
   bottle: "Bottle",
   watch: "Watch",
+  electronics: "Electronics",
+  other: "Something else",
 };
 
 export type FoundItem = {

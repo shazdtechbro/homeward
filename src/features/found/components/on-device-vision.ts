@@ -15,7 +15,7 @@ const NAMED_COLOURS: Array<[string, [number, number, number]]> = [
   ["black", [25, 25, 25]],
   ["white", [240, 240, 240]],
   ["grey", [128, 128, 128]],
-  ["silver", [192, 192, 196]],
+  ["silver", [168, 172, 178]],
   ["blue", [40, 80, 170]],
   ["green", [40, 120, 70]],
   ["red", [190, 40, 40]],

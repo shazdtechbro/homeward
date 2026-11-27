@@ -34,6 +34,12 @@ const CATEGORY_WORDS: Array<[string, Category]> = [
   ["umbrella", "umbrella"],
   ["bottle", "bottle"],
   ["watch", "watch"],
+  ["mifi", "electronics"],
+  ["router", "electronics"],
+  ["modem", "electronics"],
+  ["flash drive", "electronics"],
+  ["flash", "electronics"],
+  ["speaker", "electronics"],
 ];
 
 const COLOURS: Array<[string, string]> = [

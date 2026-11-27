@@ -5,10 +5,24 @@ import {
   RekognitionClient,
   type RekognitionClientConfig,
 } from "@aws-sdk/client-rekognition";
+import sharp from "sharp";
 import { CATEGORIES, type Category } from "@/core/domain/item";
 import type { ImageAnalysis, ImageAnalyzer } from "@/core/ports";
 import { logger } from "@/lib/logger";
 import type { JsonModel } from "./model";
+
+/**
+ * Vision models bill by image size and free tiers cap tokens per minute, so the
+ * model gets a 768px copy: plenty to recognise an object or read a matric number.
+ */
+async function forModel(bytes: Uint8Array): Promise<Uint8Array> {
+  const small = await sharp(bytes)
+    .rotate()
+    .resize(768, 768, { fit: "inside", withoutEnlargement: true })
+    .jpeg({ quality: 75 })
+    .toBuffer();
+  return new Uint8Array(small);
+}
 
 const COLOURS = [
   "black",
@@ -96,7 +110,7 @@ export class AiImageAnalyzer implements ImageAnalyzer {
       }
       const { unsafe } = await this.model.json<{ unsafe: boolean }>(
         SAFETY_PROMPT,
-        [{ image: bytes }, { text: "Check this photo." }],
+        [{ image: await forModel(bytes) }, { text: "Check this photo." }],
         20,
       );
       return unsafe === true;
@@ -114,7 +128,10 @@ export class AiImageAnalyzer implements ImageAnalyzer {
       });
 
     const [ai, extraLabels] = await Promise.all([
-      settle(this.read(bytes), "read"),
+      settle(
+        forModel(bytes).then((small) => this.read(small)),
+        "read",
+      ),
       settle(this.rekognitionLabels(bytes), "labels"),
     ]);
 

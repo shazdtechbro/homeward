@@ -25,26 +25,38 @@ export class OpenAiCompatibleModel implements JsonModel {
         : { type: "text", text: part.text },
     );
 
-    const response = await fetch(`${this.options.baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${this.options.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: hasImage ? this.options.visionModel : this.options.textModel,
-        messages: [
-          { role: "system", content: `${system}\nReply with one JSON object and nothing else.` },
-          { role: "user", content },
-        ],
-        // Reasoning models spend tokens thinking before they answer; a tight cap
-        // leaves them with nothing to reply with.
-        max_tokens: Math.max(maxTokens, 1024),
-        temperature: 0,
-        response_format: { type: "json_object" },
-      }),
-      signal: AbortSignal.timeout(15_000),
-    });
+    const send = () =>
+      fetch(`${this.options.baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${this.options.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: hasImage ? this.options.visionModel : this.options.textModel,
+          messages: [
+            { role: "system", content: `${system}\nReply with one JSON object and nothing else.` },
+            { role: "user", content },
+          ],
+          // Reasoning models spend tokens thinking before they answer; a tight cap
+          // leaves them with nothing to reply with.
+          max_tokens: Math.max(maxTokens, 1024),
+          temperature: 0,
+          response_format: { type: "json_object" },
+        }),
+        signal: AbortSignal.timeout(15_000),
+      });
+
+    // One retry on a dropped connection: campus networks blip.
+    let response = await send().catch(() => send());
+    // Free tiers cap tokens per minute. Wait out a short limit once instead of failing.
+    if (response.status === 429) {
+      const wait = Number(response.headers.get("retry-after")) || 2;
+      if (wait <= 6) {
+        await new Promise((resolve) => setTimeout(resolve, wait * 1000));
+        response = await send();
+      }
+    }
     if (!response.ok)
       throw new Error(`AI provider ${response.status}: ${(await response.text()).slice(0, 160)}`);
     const body = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> };
