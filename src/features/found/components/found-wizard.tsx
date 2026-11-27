@@ -36,6 +36,26 @@ import { COLOUR_OPTIONS, PLACE_KEYS, SUGGESTED_QUESTIONS, WHEN_OPTIONS } from ".
 import { readPhotoOnDevice } from "./on-device-vision";
 import { resizePhoto } from "./resize-photo";
 
+const ANALYSIS_STEPS = ["Looking at your photo…", "Recognising the item…", "Writing your listing…"];
+
+/** Cycles through what the AI is doing, so the wait reads as work, not lag. */
+function AnalysisStatus() {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => Math.min(s + 1, ANALYSIS_STEPS.length - 1)), 1100);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <span className="flex items-center gap-2" aria-live="polite">
+      <span className="size-2 animate-pulse rounded-full bg-coral" aria-hidden />
+      {ANALYSIS_STEPS[step]}
+    </span>
+  );
+}
+
+const filledCount = (ai: ImageAnalysis) =>
+  [ai.title, ai.category, ai.colour, ai.brand, ai.description, ai.question].filter(Boolean).length;
+
 function CategoryIcon({ category }: { category: Category }) {
   const Icon = CATEGORY_ICONS[category];
   return <Icon aria-hidden className="size-5" strokeWidth={1.75} />;
@@ -87,7 +107,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
   const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
   const [analysing, setAnalysing] = useState(false);
   const [ai, setAi] = useState<ImageAnalysis | null>(null);
-  const [aiSource, setAiSource] = useState<"nova" | "device">("device");
+  const [aiSource, setAiSource] = useState<"ai" | "device">("device");
   const [localError, setLocalError] = useState<string>();
   const [draft, setDraft] = useState<Draft>({
     title: "",
@@ -130,9 +150,9 @@ export function FoundWizard({ finder }: { finder: Finder }) {
       setAnalysing(true);
       const fd = new FormData();
       fd.set("photo", new File([blob], "photo.jpg", { type: "image/jpeg" }));
-      // Nova in the cloud and MobileNet on the device run side by side; Nova wins where it answers.
+      // The cloud model and the on-device colour reader run side by side; the model wins where it answers.
       const [cloud, device] = await Promise.all([analysePhoto(fd), readPhotoOnDevice(url)]);
-      const fromNova = Boolean(cloud.title);
+      const fromAi = Boolean(cloud.title);
       const category = cloud.category ?? device.category;
       const colour = cloud.colour ?? device.colour;
       const result: ImageAnalysis = {
@@ -146,7 +166,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
             ? `${colour ? `${colour[0]!.toUpperCase()}${colour.slice(1)} ` : ""}${CATEGORY_LABELS[category].toLowerCase()}`
             : undefined),
       };
-      setAiSource(fromNova ? "nova" : "device");
+      setAiSource(fromAi ? "ai" : "device");
       setAi(result);
       setDraft((d) => ({
         ...d,
@@ -276,7 +296,7 @@ export function FoundWizard({ finder }: { finder: Finder }) {
                       </span>
                     )}
                     <span className="absolute bottom-4 left-4 rounded-full px-4 py-2 text-[13px] font-semibold glass">
-                      {analysing ? "Reading your photo…" : "Tap to retake"}
+                      {analysing ? <AnalysisStatus /> : "Tap to retake"}
                     </span>
                   </>
                 ) : (
@@ -295,9 +315,13 @@ export function FoundWizard({ finder }: { finder: Finder }) {
               {ai && !analysing && (ai.labels.length > 0 || ai.title || ai.colour) && (
                 <div className="mt-5 rounded-[20px] bg-sky/35 p-4" aria-live="polite">
                   <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase">
-                    {aiSource === "nova" ? "What the AI saw" : "What we read from your photo"}
+                    {aiSource === "ai"
+                      ? "Homeward AI read your photo"
+                      : "What we read from your photo"}
                     <span className="ml-2 rounded-full bg-white/80 px-2 py-0.5 text-[10px] tracking-normal text-ink-2 normal-case">
-                      {aiSource === "nova" ? "Amazon Nova on Bedrock" : "Read on your device"}
+                      {aiSource === "ai"
+                        ? `${filledCount(ai)} fields filled in`
+                        : "Read on your device"}
                     </span>
                   </p>
                   <div className="mt-2.5 flex flex-wrap gap-2">

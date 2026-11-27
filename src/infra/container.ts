@@ -18,8 +18,12 @@ import {
   DynamoTable,
   DynamoUserRepository,
 } from "./aws/dynamo-store";
-import { Bedrock, NovaAnswerJudge, NovaReportParser, TitanEmbedder } from "./aws/bedrock";
-import { AwsImageAnalyzer } from "./aws/image-analyzer";
+import { AiAnswerJudge } from "./ai/answer-judge";
+import { AiImageAnalyzer } from "./ai/image-analyzer";
+import { FailoverModel, type JsonModel } from "./ai/model";
+import { OpenAiCompatibleModel } from "./ai/openai-compatible";
+import { AiReportParser } from "./ai/report-parser";
+import { Bedrock, TitanEmbedder } from "./aws/bedrock";
 import { S3PhotoStorage } from "./aws/s3-photo-storage";
 import { withDemoSeeds } from "./demo-seeds";
 import { HybridMatchService } from "./mock/in-memory-match-service";
@@ -52,14 +56,36 @@ function assemble({ listings, ...parts }: Parts): Services {
   return { ...parts, items, matcher: new HybridMatchService(items, parts.embedder) };
 }
 
+/** The secondary AI provider, when one is configured. */
+function secondaryModel(): JsonModel | undefined {
+  const { HOMEWARD_AI_BASE_URL: baseUrl, HOMEWARD_AI_API_KEY: apiKey } = env;
+  const textModel = env.HOMEWARD_AI_TEXT_MODEL;
+  if (!baseUrl || !apiKey || !textModel) return undefined;
+  return new OpenAiCompatibleModel({
+    baseUrl,
+    apiKey,
+    textModel,
+    visionModel: env.HOMEWARD_AI_VISION_MODEL ?? textModel,
+  });
+}
+
+function aiServices(model: JsonModel | undefined, rekognition?: { region: string }) {
+  const keywords = new KeywordReportParser();
+  if (!model) return { reportParser: keywords, vision: new NoOpImageAnalyzer() };
+  return {
+    reportParser: new AiReportParser(model, keywords),
+    vision: new AiImageAnalyzer(model, rekognition),
+    judge: new AiAnswerJudge(model),
+  };
+}
+
 function createMockServices(): Services {
   return assemble({
     listings: new MemoryListingRepository(),
     users: new MemoryUserRepository(),
     claims: new MemoryClaimRepository(),
     photos: new MemoryPhotoStorage(),
-    vision: new NoOpImageAnalyzer(),
-    reportParser: new KeywordReportParser(),
+    ...aiServices(secondaryModel()),
   });
 }
 
@@ -70,15 +96,15 @@ function createAwsServices(): Services {
   const rekognition = env.HOMEWARD_REKOGNITION_REGION
     ? { ...config, region: env.HOMEWARD_REKOGNITION_REGION }
     : undefined;
+  const secondary = secondaryModel();
+  const model: JsonModel = secondary ? new FailoverModel(bedrock, secondary) : bedrock;
   return assemble({
     listings: new DynamoListingRepository(table),
     users: new DynamoUserRepository(table),
     claims: new DynamoClaimRepository(table),
     photos: new S3PhotoStorage(config, env.HOMEWARD_BUCKET!),
-    vision: new AwsImageAnalyzer(bedrock, rekognition),
-    reportParser: new NovaReportParser(bedrock, new KeywordReportParser()),
+    ...aiServices(model, rekognition),
     embedder: env.HOMEWARD_EMBED_MODEL ? new TitanEmbedder(bedrock) : undefined,
-    judge: new NovaAnswerJudge(bedrock),
   });
 }
 

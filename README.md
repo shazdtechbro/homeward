@@ -41,7 +41,7 @@ More than 50,000 students move every day between hostels, faculties, CBT centres
 
 **Deployment.** One push deploys everything. Amplify builds the Next.js app, serves the frontend through CloudFront and runs the backend on Lambda. Data lives in `eu-north-1` (Stockholm), provisioned by `pnpm aws:setup`. Step-by-step setup: [docs/AWS-SETUP.md](docs/AWS-SETUP.md).
 
-**Resilience.** Every AI call has a deterministic fallback: a keyword parser for reports, word-overlap for answers, and colour read in the browser for photos. A slow or unavailable model never breaks a search.
+**Resilience.** AI calls go to Amazon Bedrock first and fail over automatically to a secondary OpenAI-compatible provider (configured by environment variables), with a cool-down so a failing primary doesn't add latency. Beneath that, every feature has a deterministic fallback: a typo-tolerant keyword parser for reports, word overlap for answers, and colour read in the browser for photos. A slow or unavailable model never breaks a search.
 
 ## Security
 
@@ -69,6 +69,7 @@ src/
     domain/             pure rules: matching, answer checking, pickup codes, privacy
     ports/              interfaces for repositories, AI, storage
   infra/
+    ai/                 AI features (report parsing, photo reading, answer judging) and failover
     aws/                DynamoDB, S3, Bedrock adapters
     mock/               in-memory adapters for local development
     container.ts        the one composition root (HOMEWARD_ADAPTERS=mock | aws)
@@ -97,6 +98,8 @@ Node 22+ and pnpm 10. To run against real AWS, follow [docs/AWS-SETUP.md](docs/A
 | `HOMEWARD_TABLE` / `HOMEWARD_BUCKET` | DynamoDB table and S3 bucket (written by `aws:setup`) |
 | `HOMEWARD_SESSION_SECRET` | 32+ characters, signs session cookies |
 | `HOMEWARD_TEXT_MODEL` | Bedrock model, default `eu.amazon.nova-2-lite-v1:0` |
+| `HOMEWARD_AI_BASE_URL` / `HOMEWARD_AI_API_KEY` | Optional secondary AI provider (OpenAI-compatible) for failover |
+| `HOMEWARD_AI_TEXT_MODEL` / `HOMEWARD_AI_VISION_MODEL` | Model names on the secondary provider |
 
 ## Design and performance
 

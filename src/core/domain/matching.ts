@@ -71,7 +71,8 @@ export function rankMatches(
       const score =
         sim === undefined
           ? fields
-          : (1 - SEMANTIC_WEIGHT) * fields + SEMANTIC_WEIGHT * Math.max(0, sim);
+          : // Similarity closes part of the gap to 1, so it can lift a score but never sink one.
+            fields + SEMANTIC_WEIGHT * Math.max(0, sim) * (1 - fields);
       return { item, score: Math.round(score * 100) / 100 };
     })
     .filter((match) => match.score >= floor)

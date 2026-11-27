@@ -3,12 +3,28 @@
 import { Lock } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { splitByEvidence } from "@/features/ai-demo/highlight";
 import { Arrow, Button } from "@/ui/button";
 import { cn } from "@/ui/cn";
 import { ItemPhoto } from "@/ui/item-photo";
 import { searchLost, type LostSearchResult } from "../actions";
+
+const SEARCH_STEPS = [
+  "Reading your description…",
+  "Working out what, where and when…",
+  "Scanning every find on campus…",
+  "Ranking the closest matches…",
+];
+
+function SearchStatus() {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => Math.min(s + 1, SEARCH_STEPS.length - 1)), 900);
+    return () => clearInterval(id);
+  }, []);
+  return <>{SEARCH_STEPS[step]}</>;
+}
 
 const EXAMPLES = [
   "Black HP laptop with a sticker, left at the main library last night",
@@ -102,7 +118,7 @@ export function LostSearch() {
                 <span className="absolute inset-0 animate-radar-ping rounded-full bg-coral/30" />
                 <span className="size-3 rounded-full bg-coral" />
               </span>
-              Reading your description and scanning every find on campus…
+              <SearchStatus />
             </motion.div>
           )}
 
@@ -125,7 +141,7 @@ export function LostSearch() {
             >
               <div className="rounded-[24px] bg-sky/30 p-5">
                 <p className="text-[13px] font-bold tracking-[0.1em] text-green uppercase">
-                  What we understood
+                  Homeward AI understood
                 </p>
                 <p className="mt-2 text-[17px] leading-relaxed">
                   {splitByEvidence(submitted, evidence).map((part, i) =>

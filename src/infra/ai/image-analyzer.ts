@@ -8,7 +8,7 @@ import {
 import { CATEGORIES, type Category } from "@/core/domain/item";
 import type { ImageAnalysis, ImageAnalyzer } from "@/core/ports";
 import { logger } from "@/lib/logger";
-import type { Bedrock } from "./bedrock";
+import type { JsonModel } from "./model";
 
 const COLOURS = [
   "black",
@@ -28,7 +28,7 @@ const COLOURS = [
 /** UNILORIN matric numbers, e.g. 19/52HA041. */
 const MATRIC = /\b\d{2}\s*\/\s*\d{2}[A-Z]{2}\d{3}\b/i;
 
-type NovaReading = {
+type Reading = {
   labels?: string[];
   title?: string;
   category?: string;
@@ -57,24 +57,25 @@ const SAFETY_PROMPT = `Is this photo safe to show publicly on a campus lost-and-
 Unsafe means nudity, sexual content, violence, gore or hateful symbols. Shape: {"unsafe": true | false}`;
 
 /**
- * Nova reads the photo and drafts the listing in one call. Where the region
+ * The AI reads the photo and drafts the listing in one call. Where the region
  * offers Rekognition, its labels and moderation are layered on top.
  */
-export class AwsImageAnalyzer implements ImageAnalyzer {
+export class AiImageAnalyzer implements ImageAnalyzer {
   private readonly rekognition?: RekognitionClient;
 
   constructor(
-    private readonly bedrock: Bedrock,
+    private readonly model: JsonModel,
     rekognitionConfig?: RekognitionClientConfig,
   ) {
     if (rekognitionConfig) this.rekognition = new RekognitionClient(rekognitionConfig);
   }
 
   private read(bytes: Uint8Array) {
-    return this.bedrock.json<NovaReading>(READ_PROMPT, [
-      { image: { format: "jpeg", source: { bytes } } },
-      { text: "Read this found item." },
-    ]);
+    return this.model.json<Reading>(
+      READ_PROMPT,
+      [{ image: bytes }, { text: "Read this found item." }],
+      400,
+    );
   }
 
   private async rekognitionLabels(bytes: Uint8Array) {
@@ -93,9 +94,9 @@ export class AwsImageAnalyzer implements ImageAnalyzer {
         );
         return (result.ModerationLabels ?? []).length > 0;
       }
-      const { unsafe } = await this.bedrock.json<{ unsafe: boolean }>(
+      const { unsafe } = await this.model.json<{ unsafe: boolean }>(
         SAFETY_PROMPT,
-        [{ image: { format: "jpeg", source: { bytes } } }, { text: "Check this photo." }],
+        [{ image: bytes }, { text: "Check this photo." }],
         20,
       );
       return unsafe === true;
@@ -112,32 +113,32 @@ export class AwsImageAnalyzer implements ImageAnalyzer {
         return undefined;
       });
 
-    const [nova, extraLabels] = await Promise.all([
+    const [ai, extraLabels] = await Promise.all([
       settle(this.read(bytes), "read"),
       settle(this.rekognitionLabels(bytes), "labels"),
     ]);
 
-    const category = (CATEGORIES as readonly string[]).includes(nova?.category ?? "")
-      ? (nova!.category as Category)
+    const category = (CATEGORIES as readonly string[]).includes(ai?.category ?? "")
+      ? (ai!.category as Category)
       : undefined;
     const matric =
       category === "id-card"
-        ? MATRIC.exec(nova?.matric ?? "")?.[0]
+        ? MATRIC.exec(ai?.matric ?? "")?.[0]
             .replace(/\s/g, "")
             .toUpperCase()
         : undefined;
-    const labels = [...new Set([...(extraLabels ?? []), ...(nova?.labels ?? [])])].slice(0, 8);
+    const labels = [...new Set([...(extraLabels ?? []), ...(ai?.labels ?? [])])].slice(0, 8);
 
     return {
       labels,
       category,
-      colour: nova?.colour && COLOURS.includes(nova.colour) ? nova.colour : undefined,
-      brand: nova?.brand ?? undefined,
-      title: nova?.title?.slice(0, 60),
-      description: nova?.description?.slice(0, 280),
-      question: nova?.question?.slice(0, 120),
+      colour: ai?.colour && COLOURS.includes(ai.colour) ? ai.colour : undefined,
+      brand: ai?.brand ?? undefined,
+      title: ai?.title?.slice(0, 60),
+      description: ai?.description?.slice(0, 280),
+      question: ai?.question?.slice(0, 120),
       matric,
-      unsafe: nova?.unsafe === true,
+      unsafe: ai?.unsafe === true,
     };
   }
 }

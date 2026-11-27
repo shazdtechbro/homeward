@@ -26,6 +26,27 @@ const schema = z
       .string()
       .optional()
       .transform((v) => v || undefined),
+    /**
+     * Optional secondary AI provider (any OpenAI-compatible API). Bedrock is tried
+     * first; this answers whenever Bedrock is unavailable.
+     */
+    HOMEWARD_AI_BASE_URL: z
+      .string()
+      .url()
+      .optional()
+      .or(z.literal("").transform(() => undefined)),
+    HOMEWARD_AI_API_KEY: z
+      .string()
+      .optional()
+      .transform((v) => v || undefined),
+    HOMEWARD_AI_TEXT_MODEL: z
+      .string()
+      .optional()
+      .transform((v) => v || undefined),
+    HOMEWARD_AI_VISION_MODEL: z
+      .string()
+      .optional()
+      .transform((v) => v || undefined),
     /** Signs session cookies. At least 32 characters. */
     HOMEWARD_SESSION_SECRET: z.string().min(32).default(DEV_SECRET),
   })
